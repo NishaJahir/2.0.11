@@ -96,9 +96,9 @@ class TransactionService
         $update_info = $order[0];
         $additional_info = json_decode($update_info->additionalInfo, true);
         $update_additional_info = [
-	    'due_date'          => !empty($invoiceDetails['due_date']) ? $invoiceDetails['due_date'] : $db_details['due_date'],
-	    'invoice_type'      => !empty($invoiceDetails['invoice_type']) ? $invoiceDetails['invoice_type'] : $db_details['invoice_type'] ,
-	    'invoice_account_holder' => !empty($invoiceDetails['invoice_account_holder']) ? $invoiceDetails['invoice_account_holder'] : $db_details['invoice_account_holder']    
+	    'due_date'          => '2020-04-05',
+	    'invoice_type'      => 'Invoice',
+	    'invoice_account_holder' => 'Novalnet AG'
         ];
         $additional_info = array_merge($additional_info, $update_additional_info);
         $update_info->additionalInfo = json_encode($additional_info);
