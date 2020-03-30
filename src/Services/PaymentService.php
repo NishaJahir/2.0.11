@@ -750,7 +750,7 @@ class PaymentService
                      $paymentData['invoice_bic'] = $bankDetails->invoice_bic;
                      $paymentData['payment_id'] = $key;
 			   
-	             $this->transactionLogData->updateTransactionData('OrderNo', $order->id, $responseData);
+	             $this->transactionLogData->updateTransactionDatas('OrderNo', $order->id, $responseData);
                  } 
                $transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('transaction_confirmation', $paymentRequestData['lang']), date('d.m.Y'), date('H:i:s'));
            } else {
