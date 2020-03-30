@@ -30,23 +30,7 @@ class TransactionService
 {
     use Loggable;
 	
-	/**
-	 *
-	 * @var PaymentService
-	 */
-	private $paymentService;
-	
-	/**
-	 * Constructor.
-	 *
-	 * @param PaymentHelper $paymentHelper
-	 * @param PaymentService $paymentService
-	 */
-	 
-    public function __construct(PaymentService $paymentService)
-    {
-	    $this->paymentService  = $paymentService;
-	}	
+		
 
     /**
      * Save data in transaction table
@@ -92,7 +76,6 @@ class TransactionService
     {
         $database = pluginApp(DataBase::class);
         $order    = $database->query(TransactionLog::class)->where($key, '=', $value)->get();
-         $db_details = $this->paymentService->getDatabaseValues($value);
         $update_info = $order[0];
         $additional_info = json_decode($update_info->additionalInfo, true);
         $update_additional_info = [
