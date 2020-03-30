@@ -449,7 +449,8 @@ class CallbackController extends Controller
                                         $paymentData['invoice_bankplace'] = !empty($this->aryCaptureParams['invoice_bankplace']) ? $this->aryCaptureParams['invoice_bankplace'] : $bankDetails->invoice_bankplace;
                                         $paymentData['invoice_iban'] = !empty($this->aryCaptureParams['invoice_iban']) ? $this->aryCaptureParams['invoice_iban'] : $bankDetails->invoice_iban;
                                         $paymentData['invoice_bic'] = !empty($this->aryCaptureParams['invoice_bic']) ? $this->aryCaptureParams['invoice_bic'] : $bankDetails->invoice_bic;
-                                        $paymentData['payment_id'] = $db_details['payment_id'];
+                                         $paymentData['due_date'] = !empty($this->aryCaptureParams['due_date']) ? $this->aryCaptureParams['due_date'] : $bankDetails->due_dae;
+					$paymentData['payment_id'] = $db_details['payment_id'];
 					
 					$this->transaction->updateTransactionDatas('orderNo', $nnTransactionHistory->orderNo, $this->aryCaptureParams);
                                 }
