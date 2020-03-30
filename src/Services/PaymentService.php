@@ -742,16 +742,15 @@ class PaymentService
             
             $transactionComments = '';
             if($responseData['tid_status'] == '100') {
-                   if (in_array($key, ['27', '41'])) {	    
+                   if (in_array($key, ['27', '41'])) {
                      $bankDetails = json_decode($invoiceDetails);
                      $paymentData['invoice_bankname'] = $bankDetails->invoice_bankname;
                      $paymentData['invoice_bankplace'] = $bankDetails->invoice_bankplace;
                      $paymentData['invoice_iban'] = $bankDetails->invoice_iban;
                      $paymentData['invoice_bic'] = $bankDetails->invoice_bic;
-                     $paymentData['due_date'] = $responseData['due_date'];
-                     $paymentData['invoice_type'] = $bankDetails->invoice_type;
-                     $paymentData['invoice_account_holder'] = $bankDetails->invoice_account_holder;
                      $paymentData['payment_id'] = $key;
+			   
+	             $this->transactionLogData->updateTransactionData('OrderNo', $order->id, $responseData);
                  } 
                $transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('transaction_confirmation', $paymentRequestData['lang']), date('d.m.Y'), date('H:i:s'));
            } else {
