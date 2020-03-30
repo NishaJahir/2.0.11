@@ -202,7 +202,8 @@ class PaymentHelper
               'invoice_bankname'  => $requestData['invoice_bankname'],
               'invoice_bankplace' => $requestData['invoice_bankplace'],
               'invoice_iban'      => $requestData['invoice_iban'],
-              'invoice_bic'       => $requestData['invoice_bic']
+              'invoice_bic'       => $requestData['invoice_bic'],
+              'due_date'          => $requestData['due_date']
                ];
            
         $invoiceDetails = json_encode($invoicePrepaymentDetails);
