@@ -747,9 +747,8 @@ class PaymentService
                      $paymentData['invoice_bankplace'] = $bankDetails->invoice_bankplace;
                      $paymentData['invoice_iban'] = $bankDetails->invoice_iban;
                      $paymentData['invoice_bic'] = $bankDetails->invoice_bic;
+		     $paymentData['due_date'] = !empty($responseData['due_date']) ? $responseData['due_date'] : $bankDetails->due_date;
                      $paymentData['payment_id'] = $key;
-			   
-	             $this->transactionLogData->updateTransactionDatas('OrderNo', $order->id, $responseData);
                  } 
                $transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('transaction_confirmation', $paymentRequestData['lang']), date('d.m.Y'), date('H:i:s'));
            } else {
