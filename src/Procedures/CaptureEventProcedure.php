@@ -21,6 +21,8 @@ use Plenty\Plugin\Log\Loggable;
 use Plenty\Modules\Payment\Contracts\PaymentRepositoryContract;
 use Novalnet\Services\PaymentService;
 
+use Novalnet\Services\TransactionService;
+
 /**
  * Class CaptureEventProcedure
  */
@@ -33,6 +35,7 @@ class CaptureEventProcedure
 	 * @var PaymentService
 	 */
 	private $paymentService;
+	private $transaction;
 	
 	/**
 	 * Constructor.
@@ -41,9 +44,10 @@ class CaptureEventProcedure
 	 * @param PaymentService $paymentService
 	 */
 	 
-    public function __construct(PaymentService $paymentService)
+    public function __construct(PaymentService $paymentService, TransactionService $tranactionService)
     {
 	    $this->paymentService  = $paymentService;
+	     $this->transaction          = $tranactionService;
 	}	
 	
     /**
