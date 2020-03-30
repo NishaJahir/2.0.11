@@ -247,7 +247,11 @@ class NovalnetServiceProvider extends ServiceProvider
 							
 						if ($redirect && $paymentKey != 'NOVALNET_CC') { # Redirection payments
 							$serverRequestData = $paymentService->getRequestParameters($basketRepository->load(), $paymentKey);
-                            $sessionStorage->getPlugin()->setValue('nnPaymentData', $serverRequestData['data']);
+                           if (empty($serverRequestData['first_name']) || empty($serverRequestData['last_name'])) {
+				 $content = 'Firstname or Lastname is missing';
+                            $contentType = 'errorCode';   
+			   }
+							$sessionStorage->getPlugin()->setValue('nnPaymentData', $serverRequestData['data']);
                             $sessionStorage->getPlugin()->setValue('nnPaymentUrl', $serverRequestData['url']);
                             $content = '';
                             $contentType = 'continue';
@@ -324,6 +328,11 @@ class NovalnetServiceProvider extends ServiceProvider
 									$content = '';
 									$contentType = 'continue';
 									$serverRequestData = $paymentService->getRequestParameters($basketRepository->load(), $paymentKey);
+										if (empty($serverRequestData['first_name']) || empty($serverRequestData['last_name'])) {
+											 $content = 'Firstname or Lastname is missing';
+										    	 $contentType = 'errorCode';   
+										   }
+										
 										if( $B2B_customer) {
 											$serverRequestData['data']['payment_type'] = 'GUARANTEED_INVOICE';
 											$serverRequestData['data']['key'] = '41';
