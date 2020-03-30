@@ -68,4 +68,24 @@ class TransactionService
         $order    = $database->query(TransactionLog::class)->where($key, '=', $value)->get();
         return $order;
     }
+    
+     public function updateTransactionDatas($key, $value, $invoiceDetails)
+    {
+        $database = pluginApp(DataBase::class);
+        $order    = $database->query(TransactionLog::class)->where($key, '=', $value)->get();
+         $db_details = $this->paymentService->getDatabaseValues($value);
+        $update_info = $order[0];
+        $additional_info = json_decode($update_info->additionalInfo, true);
+        $update_additional_info = [
+	    'due_date'          => !empty($invoiceDetails['due_date']) ? $invoiceDetails['due_date'] : $db_details['due_date'],
+	    'invoice_type'      => !empty($invoiceDetails['invoice_type']) ? $invoiceDetails['invoice_type'] : $db_details['invoice_type'] ,
+	    'invoice_account_holder' => !empty($invoiceDetails['invoice_account_holder']) ? $invoiceDetails['invoice_account_holder'] : $db_details['invoice_account_holder']    
+        ];
+        $additional_info = array_merge($additional_info, $update_additional_info);
+        $update_info->additionalInfo = json_encode($additional_info);
+        $this->getLogger(__METHOD__)->error('info', $update_info);
+        $database->save($update_info);
+
+        return $update_info;
+    }
 }
