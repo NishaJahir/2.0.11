@@ -247,14 +247,15 @@ class NovalnetServiceProvider extends ServiceProvider
 							
 						if ($redirect && $paymentKey != 'NOVALNET_CC') { # Redirection payments
 							$serverRequestData = $paymentService->getRequestParameters($basketRepository->load(), $paymentKey);
-                           if (empty($serverRequestData['first_name']) || empty($serverRequestData['last_name'])) {
-				 $content = 'Firstname or Lastname is missing';
-                            $contentType = 'errorCode';   
-			   }
-							$sessionStorage->getPlugin()->setValue('nnPaymentData', $serverRequestData['data']);
+                           if (empty($serverRequestData['data']['first_name']) || empty($serverRequestData['data']['last_name'])) {
+				    $content = $paymentHelper->getTranslatedText('nn_first_last_name_error');
+				    $contentType = 'errorCode';   
+			   } else {
+		             $sessionStorage->getPlugin()->setValue('nnPaymentData', $serverRequestData['data']);
                             $sessionStorage->getPlugin()->setValue('nnPaymentUrl', $serverRequestData['url']);
                             $content = '';
                             $contentType = 'continue';
+			   }
 						} elseif ($paymentKey == 'NOVALNET_CC') { # Credit Card
                             $encodedKey = base64_encode('vendor='.$paymentHelper->getNovalnetConfig('novalnet_vendor_id').'&product='.$paymentHelper->getNovalnetConfig('novalnet_product_id').'&server_ip='.$paymentHelper->getServerAddress().'&lang='.$sessionStorage->getLocaleSettings()->language);
                             $nnIframeSource = 'https://secure.novalnet.de/cc?api=' . $encodedKey;
@@ -328,11 +329,10 @@ class NovalnetServiceProvider extends ServiceProvider
 									$content = '';
 									$contentType = 'continue';
 									$serverRequestData = $paymentService->getRequestParameters($basketRepository->load(), $paymentKey);
-										if (empty($serverRequestData['first_name']) || empty($serverRequestData['last_name'])) {
-											 $content = 'Firstname or Lastname is missing';
-										    	 $contentType = 'errorCode';   
-										   }
-										
+									if (empty($serverRequestData['data']['first_name']) || empty($serverRequestData['data']['last_name'])) {
+										    $content = $paymentHelper->getTranslatedText('nn_first_last_name_error');
+										    $contentType = 'errorCode';   
+									 } else {	
 										if( $B2B_customer) {
 											$serverRequestData['data']['payment_type'] = 'GUARANTEED_INVOICE';
 											$serverRequestData['data']['key'] = '41';
@@ -351,7 +351,7 @@ class NovalnetServiceProvider extends ServiceProvider
 									}
 									$responseData['payment_id'] = (!empty($responseData['payment_id'])) ? $responseData['payment_id'] : $responseData['key'];
 									$sessionStorage->getPlugin()->setValue('nnPaymentData', array_merge($serverRequestData['data'], $responseData));
-									
+									}
 									
 									} 
 								} 
