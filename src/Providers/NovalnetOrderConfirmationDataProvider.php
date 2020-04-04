@@ -25,6 +25,7 @@ use Plenty\Modules\Payment\Contracts\PaymentRepositoryContract;
 use \Plenty\Modules\Authorization\Services\AuthHelper;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Novalnet\Services\PaymentService;
+use Plenty\Plugin\Log\Loggable;
 /**
  * Class NovalnetOrderConfirmationDataProvider
  *
@@ -32,6 +33,7 @@ use Novalnet\Services\PaymentService;
  */
 class NovalnetOrderConfirmationDataProvider
 {
+	use Loggable;
 	/**
 	 * Setup the Novalnet transaction comments for the requested order
 	 *
