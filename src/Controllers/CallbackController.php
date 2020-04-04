@@ -316,7 +316,8 @@ class CallbackController extends Controller
 			    
 				$db_details = $this->paymentService->getDatabaseValues($nnTransactionHistory->orderNo);
 	                        if(in_array ($db_details['payment_id'], [ '27', '41'] ) ) {
-				  $paymentData = $this->getInvoiceDetails($this->aryCaptureParams, $db_details);
+				  $paymentDetails = $this->payment_details($nnTransactionHistory->orderNo, true);
+				  $paymentData = $this->getInvoiceDetails($this->aryCaptureParams, $db_details, $paymentDetails);
 				  $this->getLogger(__METHOD__)->error('call', $paymentData);
 		                }
 
@@ -891,8 +892,7 @@ class CallbackController extends Controller
                 return $address_ref;
     }
     
-   public function getInvoiceDetails($arycaptureParams, $db_details) {
-	$paymentDetails = $this->payment_details($nnTransactionHistory->orderNo, true);
+   public function getInvoiceDetails($arycaptureParams, $db_details, $paymentDetails) {
 	$bankDetails = json_decode($paymentDetails);
 	$paymentData['invoice_bankname'] = !empty($arycaptureParams['invoice_bankname']) ? $arycaptureParams['invoice_bankname'] : $bankDetails->invoice_bankname;
 	$paymentData['invoice_bankplace'] = !empty($arycaptureParams['invoice_bankplace']) ? $arycaptureParams['invoice_bankplace'] : $bankDetails->invoice_bankplace;
