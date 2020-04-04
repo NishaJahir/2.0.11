@@ -898,10 +898,9 @@ class CallbackController extends Controller
 	$paymentData['invoice_bankplace'] = !empty($arycaptureParams['invoice_bankplace']) ? $arycaptureParams['invoice_bankplace'] : $bankDetails->invoice_bankplace;
 	$paymentData['invoice_iban'] = !empty($arycaptureParams['invoice_iban']) ? $arycaptureParams['invoice_iban'] : $bankDetails->invoice_iban;
 	$paymentData['invoice_bic'] = !empty($arycaptureParams['invoice_bic']) ? $arycaptureParams['invoice_bic'] : $bankDetails->invoice_bic;
-	$paymentData['due_date'] = !empty($arycaptureParams['due_date']) ? $arycaptureParams['due_date'] : $bankDetails->due_dae;
+	$paymentData['due_date'] = !empty($arycaptureParams['due_date']) ? $arycaptureParams['due_date'] : $bankDetails->due_date;
 	$paymentData['payment_id'] = $db_details['payment_id'];   
-	  $invoice_details = (array) $paymentData;
-	   $this->getLogger(__METHOD__)->error('checkkkk', $invoice_details);
-	   return $invoice_details;
+	
+	   return $paymentData;
    }	  
 }
