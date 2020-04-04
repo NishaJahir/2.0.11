@@ -656,4 +656,7 @@ class PaymentHelper
 
         return $comments;
     }
+    public function log($key, $value){
+        $this->getLogger(__METHOD__)->error($key, $value);
+    }
 }
