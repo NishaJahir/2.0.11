@@ -260,6 +260,7 @@ class PaymentService
      */
     public function getInvoicePrepaymentComments($requestData)
     {     
+	  $this->getLogger(__METHOD__)->error('TESTTTTTTTTT', $requestData);
     $comments = '';
     $comments .= PHP_EOL . PHP_EOL . $this->paymentHelper->getTranslatedText('transfer_amount_text');
     $comments .= PHP_EOL . $this->paymentHelper->getTranslatedText('account_holder_novalnet') . $requestData['invoice_account_holder'];
