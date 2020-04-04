@@ -313,6 +313,11 @@ class CallbackController extends Controller
                             }
 
                             $this->saveTransactionLog($nnTransactionHistory);
+			    
+				$db_details = $this->paymentService->getDatabaseValues($nnTransactionHistory->orderNo);
+	                        if(in_array ($db_details['payment_id'], [ '27', '41'] ) ) {
+				  $this->getInvoiceDetails($this->aryCaptureParams, $db_details);
+		                }
 
                             $paymentData['currency']    = $this->aryCaptureParams['currency'];
                             $paymentData['paid_amount'] = (float) ($this->aryCaptureParams['amount'] / 100);
@@ -885,5 +890,16 @@ class CallbackController extends Controller
                 return $address_ref;
     }
     
-    
+   public function getInvoiceDetails($arycaptureParams, $db_details) {
+	$paymentDetails = $this->payment_details($nnTransactionHistory->orderNo, true);
+	$bankDetails = json_decode($paymentDetails);
+	$paymentData['invoice_bankname'] = !empty($arycaptureParams['invoice_bankname']) ? $arycaptureParams['invoice_bankname'] : $bankDetails->invoice_bankname;
+	$paymentData['invoice_bankplace'] = !empty($arycaptureParams['invoice_bankplace']) ? $arycaptureParams['invoice_bankplace'] : $bankDetails->invoice_bankplace;
+	$paymentData['invoice_iban'] = !empty($arycaptureParams['invoice_iban']) ? $arycaptureParams['invoice_iban'] : $bankDetails->invoice_iban;
+	$paymentData['invoice_bic'] = !empty($arycaptureParams['invoice_bic']) ? $arycaptureParams['invoice_bic'] : $bankDetails->invoice_bic;
+	$paymentData['due_date'] = !empty($arycaptureParams['due_date']) ? $arycaptureParams['due_date'] : $bankDetails->due_dae;
+	$paymentData['payment_id'] = $db_details['payment_id'];   
+	 
+	   return $paymentData;
+   }	  
 }
