@@ -901,6 +901,6 @@ class CallbackController extends Controller
 	$paymentData['due_date'] = !empty($arycaptureParams['due_date']) ? $arycaptureParams['due_date'] : $bankDetails->due_dae;
 	$paymentData['payment_id'] = $db_details['payment_id'];   
 	 
-	   return $paymentData;
+	   return (array) $paymentData;
    }	  
 }
