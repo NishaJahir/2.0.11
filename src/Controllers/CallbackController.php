@@ -316,7 +316,8 @@ class CallbackController extends Controller
 			    
 				$db_details = $this->paymentService->getDatabaseValues($nnTransactionHistory->orderNo);
 	                        if(in_array ($db_details['payment_id'], [ '27', '41'] ) ) {
-				  $this->getInvoiceDetails($this->aryCaptureParams, $db_details);
+				  $paymentData = $this->getInvoiceDetails($this->aryCaptureParams, $db_details);
+				  $this->getLogger(__METHOD__)->error('call', $paymentData);
 		                }
 
                             $paymentData['currency']    = $this->aryCaptureParams['currency'];
