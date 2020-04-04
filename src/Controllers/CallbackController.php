@@ -315,11 +315,15 @@ class CallbackController extends Controller
                             $this->saveTransactionLog($nnTransactionHistory);
 			    
 				$db_details = $this->paymentService->getDatabaseValues($nnTransactionHistory->orderNo);
-	                        if(in_array ($db_details['payment_id'], [ '27', '41'] ) ) {
-				  $paymentDetails = $this->payment_details($nnTransactionHistory->orderNo, true);
-				  $paymentData = $this->getInvoiceDetails($this->aryCaptureParams, $db_details, $paymentDetails);
-				  $this->getLogger(__METHOD__)->error('call', $paymentData);
-		                }
+	                        $paymentDetails = $this->payment_details($nnTransactionHistory->orderNo, true);
+				$bankDetails = json_decode($paymentDetails);
+				$paymentData['invoice_bankname'] = !empty($this->aryCaptureParams['invoice_bankname']) ? $this->aryCaptureParams['invoice_bankname'] : $bankDetails->invoice_bankname;
+				$paymentData['invoice_bankplace'] = !empty($this->aryCaptureParams['invoice_bankplace']) ? $this->aryCaptureParams['invoice_bankplace'] : $bankDetails->invoice_bankplace;
+				$paymentData['invoice_iban'] = !empty($this->aryCaptureParams['invoice_iban']) ? $this->aryCaptureParams['invoice_iban'] : $bankDetails->invoice_iban;
+				$paymentData['invoice_bic'] = !empty($this->aryCaptureParams['invoice_bic']) ? $this->aryCaptureParams['invoice_bic'] : $bankDetails->invoice_bic;
+				$paymentData['due_date'] = !empty($this->aryCaptureParams['due_date']) ? $this->aryCaptureParams['due_date'] : $bankDetails->due_dae;
+				$paymentData['payment_id'] = $db_details['payment_id'];
+					
 
                             $paymentData['currency']    = $this->aryCaptureParams['currency'];
                             $paymentData['paid_amount'] = (float) ($this->aryCaptureParams['amount'] / 100);
