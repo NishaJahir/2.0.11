@@ -95,7 +95,9 @@ class NovalnetOrderConfirmationDataProvider
 							$comments .= PHP_EOL . $paymentHelper->getTranslatedText('gurantee_sepa_pending_payment_text');
 						}
 					}
+					$this->getLogger(__METHOD__)->error('conf1111', $bank_details);
 					if (in_array($bank_details['paymentName'], ['novalnet_invoice', 'novalnet_prepayment']) && in_array($tid_status, ['91', '100'])) {
+						$this->getLogger(__METHOD__)->error('conf', $bank_details);
 						$comments .= PHP_EOL . $paymentService->getInvoicePrepaymentComments($bank_details);
 					}
 					if($db_details['payment_id'] == '59' ) {
