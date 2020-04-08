@@ -247,7 +247,7 @@ class NovalnetServiceProvider extends ServiceProvider
 							
 						if ($redirect && $paymentKey != 'NOVALNET_CC') { # Redirection payments
 							$serverRequestData = $paymentService->getRequestParameters($basketRepository->load(), $paymentKey);
-                           if (empty($serverRequestData['data']['first_name']) || empty($serverRequestData['data']['last_name'])) {
+                           if (empty($serverRequestData['data']['first_name']) && empty($serverRequestData['data']['last_name'])) {
 				    $content = $paymentHelper->getTranslatedText('nn_first_last_name_error');
 				    $contentType = 'errorCode';   
 			   } else {
@@ -329,7 +329,7 @@ class NovalnetServiceProvider extends ServiceProvider
 									$content = '';
 									$contentType = 'continue';
 									$serverRequestData = $paymentService->getRequestParameters($basketRepository->load(), $paymentKey);
-									if (empty($serverRequestData['data']['first_name']) || empty($serverRequestData['data']['last_name'])) {
+									if (empty($serverRequestData['data']['first_name']) && empty($serverRequestData['data']['last_name'])) {
 										    $content = $paymentHelper->getTranslatedText('nn_first_last_name_error');
 										    $contentType = 'errorCode';   
 									 } else {	
