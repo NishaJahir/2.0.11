@@ -133,8 +133,8 @@ class RefundEventProcedure
 					$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
 					$paymentData['order_no']    = ($order->typeId == OrderType::TYPE_CREDIT_NOTE) ? $child_order_id : $order->id;
 					$paymentData['mop']         = $paymentDetails[0]->mopId;
+					$paymentData['type']         = 'credit';
 					
-
 					$transactionComments = '';
 					if (!empty($responseData['tid'])) {
 						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message_new_tid', $paymentRequestData['lang']), $parentOrder[0]->tid, (float) $orderAmount, $responseData['tid']);
@@ -142,7 +142,8 @@ class RefundEventProcedure
 						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message', $paymentRequestData['lang']), $parentOrder[0]->tid, (float) $orderAmount);
 					 }
 					$paymentData['booking_text'] = $transactionComments;  
-	
+					$payment_type = !empty($partial_refund_amount) ?  'partial_refund' ; 'refund';
+	                                $this->paymentHelper->updatePayments($parentOrder[0]->tid, $responseData['tid_status'], $order->id, $payment_type);
 					$this->paymentHelper->createPlentyPayment($paymentData);
 				} else {
 					$error = $this->paymentHelper->getNovalnetStatusText($responseData);
