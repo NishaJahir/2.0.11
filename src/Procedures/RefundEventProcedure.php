@@ -23,6 +23,7 @@ use Plenty\Modules\Payment\Contracts\PaymentRepositoryContract;
 use Novalnet\Services\PaymentService;
 use Novalnet\Constants\NovalnetConstants;
 use Novalnet\Services\TransactionService;
+use Plenty\Modules\Order\Models\OrderType;
 
 /**
  * Class RefundEventProcedure
