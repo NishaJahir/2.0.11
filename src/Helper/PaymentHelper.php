@@ -622,7 +622,7 @@ class PaymentHelper
         } else {
           $status_type =   $payment->type;
         }
-        $payment->type = $status_type;
+        $payment->status = $status_type;
         $payment->updateOrderPaymentStatus = true;    
             
         $paymentProperty     = [];
