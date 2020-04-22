@@ -623,7 +623,7 @@ class PaymentHelper
           $status_type =   $payment->type;
         }
         $payment->type = $status_type;
-            
+        $payment->updateOrderPaymentStatus = true;    
             
         $paymentProperty     = [];
         $paymentProperty[]   = $this->getPaymentProperty(PaymentProperty::TYPE_BOOKING_TEXT, $tid);
