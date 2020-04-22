@@ -617,7 +617,7 @@ class PaymentHelper
         
         foreach ($payments as $payment) {
           
-             if (type == 'partial_refund' || type == 'refund') {
+             if ($type == 'partial_refund' || $type == 'refund') {
         $status_type = ($type == 'partial_refund') ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
         } else {
           $status_type =   $payment->type;
