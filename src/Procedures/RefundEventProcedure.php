@@ -137,14 +137,29 @@ class RefundEventProcedure
 					 } else {
 						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message', $paymentRequestData['lang']), $parentOrder[0]->tid, (float) $orderAmount);
 					 }
-					$paymentData['booking_text'] = $transactionComments;  
-					$paymentData['tid'] = $parentOrder[0]->tid;
-					$paymentData['tid_status'] = $responseData['tid'];
+					
+					$paymentData['tid'] = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
+					$paymentData['tid_status'] = $responseData['tid_status'];
 					$paymentData['remaining_paid_amount'] = (float) $orderAmount;
 					$paymentData['child_order_id'] = $child_order_id;
-					
-$debitPayment = $this->paymentHelper->createRefundPayment($paymentDetails,$paymentData,$transactionComments);
-	$this->getLogger(__METHOD__)->error('check',$debitPayment);
+					$paymentData['parent_order_id'] = $parent_order_id;
+					$paymentData['parent_tid'] = $parentOrder[0]->tid;
+					$paymentData['payment_status'] = !empty($partial_refund_amount) ? 'partial_refund' : 'refund';
+if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {			
+$this->paymentHelper->createRefundPayment($paymentDetails,$paymentData,$transactionComments);
+	
+} else {
+	$paymentData['currency']    = $paymentDetails[0]->currency;
+	$paymentData['paid_amount'] = (float) $orderAmount;
+	$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
+	$paymentData['order_no']    = $order->id;
+	$paymentData['type']        = 'debit';
+	$paymentData['mop']         = $paymentDetails[0]->mopId;
+	$paymentData['booking_text'] = $transactionComments;  
+	$this->paymentHelper->updatePayments($paymentData['tid'], $responseData['tid_status'], $order->id, '');
+	$this->paymentHelper->createPlentyPayment($paymentData);
+}
+	
 				} else {
 					$error = $this->paymentHelper->getNovalnetStatusText($responseData);
 					$this->getLogger(__METHOD__)->error('Novalnet::doRefundError', $error);
