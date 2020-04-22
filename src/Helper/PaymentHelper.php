@@ -176,7 +176,7 @@ class PaymentHelper
      * @param array $requestData
      * @return object
      */
-    public function createPlentyPayment($requestData)
+    public function createPlentyPayment($requestData, $parentId = false)
     {        
         /** @var Payment $payment */
         $payment = pluginApp(\Plenty\Modules\Payment\Models\Payment::class);
@@ -192,10 +192,14 @@ class PaymentHelper
         $bookingText = $requestData['tid'];
         }
         $transactionId = $requestData['tid'];
-        if(!empty($requestData['type']) && $requestData['type'] == 'debit')
+        if(!empty($requestData['type']) && $requestData['type'] == 'debit' && $parentId != true)
         {
             $payment->type = $requestData['type'];
             $payment->status = Payment::STATUS_REFUNDED;
+        }
+        if ($parentId){
+            $payment->type = 'debit';
+        $payment->parentId = $requestData['parentId'];;
         }
         
         $invoicePrepaymentDetails =  [
