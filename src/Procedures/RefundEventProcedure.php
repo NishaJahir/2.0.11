@@ -131,7 +131,7 @@ class RefundEventProcedure
 
 				if ($responseData['status'] == '100') {
 					$paymentData['currency']    = $paymentDetails[0]->currency;
-					$paymentData['paid_amount'] = !empty($partial_refund_amount) ?  (float) $partial_refund_amount : (float) $orderAmount,
+					$paymentData['paid_amount'] = !empty($partial_refund_amount) ?  (float) $partial_refund_amount : (float) $orderAmount;
 					$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
 					$paymentData['order_no']    = $order->id;
 					$paymentData['type']        = 'debit';
