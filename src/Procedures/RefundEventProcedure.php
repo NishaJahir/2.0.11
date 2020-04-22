@@ -140,10 +140,11 @@ class RefundEventProcedure
 					$paymentData['booking_text'] = $transactionComments;  
 					$paymentData['tid'] = $parentOrder[0]->tid;
 					$paymentData['tid_status'] = $responseData['tid'];
-					$paymentData['remaining_paid_amount'] = (float) ;
+					$paymentData['remaining_paid_amount'] = (float) $orderAmount;
 					$paymentData['child_order_id'] = $child_order_id;
+					
 $debitPayment = $this->paymentHelper->createRefundPayment($paymentDetails,$paymentData,$transactionComments);
-	                                
+	$this->getLogger(__METHOD__)->error('check',$debitPayment);
 				} else {
 					$error = $this->paymentHelper->getNovalnetStatusText($responseData);
 					$this->getLogger(__METHOD__)->error('Novalnet::doRefundError', $error);
