@@ -130,10 +130,9 @@ class RefundEventProcedure
 				if ($responseData['status'] == '100') {
 					$paymentData['currency']    = $paymentDetails[0]->currency;
 					$paymentData['paid_amount'] = (float) $orderAmount;
-					$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
+					
 					$paymentData['order_no']    = ($order->typeId == OrderType::TYPE_CREDIT_NOTE) ? $child_order_id : $order->id;
-					$paymentData['mop']         = $paymentDetails[0]->mopId;
-					$paymentData['type']         = 'credit';
+					
 					
 					$transactionComments = '';
 					if (!empty($responseData['tid'])) {
