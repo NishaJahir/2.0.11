@@ -672,4 +672,34 @@ class PaymentHelper
     public function log($key, $value){
         $this->getLogger(__METHOD__)->error($key, $value);
     }
+    
+    public function createRefundPayment($payments, $paymentData, $comments) {
+        foreach ($payments as $payment) {
+            $mop = $payment->mopId;
+            $currency = $payment->currency;
+            $parentPaymentId = $payment->id;
+        }
+        /** @var Payment $payment */
+        $payment = pluginApp(\Plenty\Modules\Payment\Models\Payment::class);
+       
+        $payment->updateOrderPaymentStatus = true;
+        $payment->mopId = (int) $mop;
+        $payment->transactionType = Payment::TRANSACTION_TYPE_BOOKED_POSTING;
+        $payment->status = Payment::STATUS_CAPTURED;
+        $payment->currency = $currency;
+        $payment->amount = $paymentData['remaining_paid_amount'];
+        $payment->receivedAt = date('Y-m-d H:i:s');
+        $payment->type = 'debit';
+        $payment->parentId = $parentPaymentId;
+        $payment->unaccountable = 0;
+        $paymentProperty     = [];
+        $paymentProperty[]   = $this->getPaymentProperty(PaymentProperty::TYPE_BOOKING_TEXT, $comments);
+        $paymentProperty[]   = $this->getPaymentProperty(PaymentProperty::TYPE_TRANSACTION_ID, $paymentData['tid']);
+        $paymentProperty[]   = $this->getPaymentProperty(PaymentProperty::TYPE_ORIGIN, Payment::ORIGIN_PLUGIN);
+        $paymentProperty[]   = $this->getPaymentProperty(PaymentProperty::TYPE_EXTERNAL_TRANSACTION_STATUS, $paymentData['$tid_status'];
+        $payment->properties = $paymentProperty;
+        $paymentObj = $this->paymentRepository->createPayment($payment);
+
+        $this->assignPlentyPaymentToPlentyOrder($paymentObj, (int)$paymentData['child_order_id']);
+    }
 }
