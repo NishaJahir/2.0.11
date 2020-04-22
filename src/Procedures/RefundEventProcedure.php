@@ -162,12 +162,13 @@ foreach ($paymentDetails as $payment) {
          $paymentData['parentId']         = $parentPaymentId;				
 						
 	$paymentData['booking_text'] = $transactionComments;  
+					$this->paymentHelper->createPlentyPayment($paymentData, true);
 	if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	$this->paymentHelper->updatePayments($paymentData['tid'] , $responseData['tid_status'], $order->id, $paymentData['payment_status'] );
 	} else {
 		$this->paymentHelper->updatePayments($paymentData['tid'] , $responseData['tid_status'], $order->id, '' );
 	}
-	$this->paymentHelper->createPlentyPayment($paymentData, true);
+	
 
 	
 				} else {
