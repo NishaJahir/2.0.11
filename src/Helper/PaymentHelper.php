@@ -192,7 +192,7 @@ class PaymentHelper
         $bookingText = $requestData['tid'];
         }
         $transactionId = $requestData['tid'];
-        if(!empty($requestData['type']) && $requestData['type'] == 'debit' && $parentId != true)
+        if(!empty($requestData['type']) && $requestData['type'] == 'debit')
         {
             $payment->type = $requestData['type'];
             $payment->status = Payment::STATUS_REFUNDED;
