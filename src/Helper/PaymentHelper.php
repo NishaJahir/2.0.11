@@ -674,6 +674,7 @@ class PaymentHelper
     }
     
     public function createRefundPayment($payments, $paymentData, $comments) {
+        $this->getLogger(__METHOD__)->error('called', $payments);
         foreach ($payments as $payment) {
             $mop = $payment->mopId;
             $currency = $payment->currency;
@@ -699,7 +700,7 @@ class PaymentHelper
         $paymentProperty[]   = $this->getPaymentProperty(PaymentProperty::TYPE_EXTERNAL_TRANSACTION_STATUS, $paymentData['$tid_status'];
         $payment->properties = $paymentProperty;
         $paymentObj = $this->paymentRepository->createPayment($payment);
-
+         $this->getLogger(__METHOD__)->error('refundpayment', $paymentObj);
         $this->assignPlentyPaymentToPlentyOrder($paymentObj, (int)$paymentData['child_order_id']);
     }
 }
