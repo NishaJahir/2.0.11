@@ -81,7 +81,7 @@ class RefundEventProcedure
 		$originOrders = $order->orderReferences; 
 		foreach ($order->orderReferences as $orderReference) {
 			$parent_order_id = $orderReference->originOrderId;
-		        $child_order_id = $originOrders->orderId;
+		        $child_order_id = $orderReference->orderId;
 			$order->id = $parent_order_id;
 		}
 	   } 
