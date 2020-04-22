@@ -142,7 +142,7 @@ class RefundEventProcedure
 						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message', $paymentRequestData['lang']), $parentOrder[0]->tid, (float) $orderAmount);
 					 }
 					$paymentData['booking_text'] = $transactionComments;  
-					$payment_type = !empty($partial_refund_amount) ?  'partial_refund' ; 'refund';
+					$payment_type = !empty($partial_refund_amount) ?  'partial_refund' : 'refund';
 	                                $this->paymentHelper->updatePayments($parentOrder[0]->tid, $responseData['tid_status'], $order->id, $payment_type);
 					$this->paymentHelper->createPlentyPayment($paymentData);
 				} else {
