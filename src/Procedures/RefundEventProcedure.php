@@ -168,7 +168,7 @@ foreach ($paymentDetails as $payment) {
 		$this->paymentHelper->updatePayments($paymentData['tid'] , $responseData['tid_status'], $order->id, '' );
 	}
 	$this->paymentHelper->createPlentyPayment($paymentData, true);
-}
+
 	
 				} else {
 					$error = $this->paymentHelper->getNovalnetStatusText($responseData);
