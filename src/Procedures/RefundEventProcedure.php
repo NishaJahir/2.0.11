@@ -138,7 +138,11 @@ class RefundEventProcedure
 						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message', $paymentRequestData['lang']), $parentOrder[0]->tid, (float) $orderAmount);
 					 }
 					$paymentData['booking_text'] = $transactionComments;  
-//$debitPayment = $this->paymentHelper->createRefundPayment($paymentDetails,$responseData,$orderAmount);
+					$paymentData['tid'] = $parentOrder[0]->tid;
+					$paymentData['tid_status'] = $responseData['tid'];
+					$paymentData['remaining_paid_amount'] = (float) ;
+					$paymentData['child_order_id'] = $child_order_id;
+$debitPayment = $this->paymentHelper->createRefundPayment($paymentDetails,$paymentData,$transactionComments);
 	                                
 				} else {
 					$error = $this->paymentHelper->getNovalnetStatusText($responseData);
