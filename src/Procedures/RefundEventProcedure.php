@@ -76,7 +76,7 @@ class RefundEventProcedure
 	   $order = $eventTriggered->getOrder(); 
 	 $this->getLogger(__METHOD__)->error('order', $order);
 	    // Checking order type
-	   if ($order->typeId == TYPE_CREDIT_NOTE) {
+	   if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 		$originOrders = $order->orderReferences; 
 		$parent_order_id = $originOrders->originOrderId;
 		   $this->getLogger(__METHOD__)->error('parent', $parent_order_id);
