@@ -74,18 +74,20 @@ class RefundEventProcedure
         /* @var $order Order */
 	 
 	   $order = $eventTriggered->getOrder(); 
+	   
 	 $this->getLogger(__METHOD__)->error('order', $order);
 	    // Checking order type
 	   if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 		$originOrders = $order->orderReferences; 
-		$parent_order_id = $originOrders->originOrderId;
+		$this->getLogger(__METHOD__)->error('origin', $originOrders);
+		foreach ($order->orderReferences as $orderReference) {
+			$parent_order_id = $orderReference->originOrderId;
 		   $this->getLogger(__METHOD__)->error('parent', $parent_order_id);
-		$child_order_id = $originOrders->orderId;
-		   $this->getLogger(__METHOD__)->error('child', $child_order_id);
-		$order->id = $parent_order_id;
+		}
 	   } 
-	   $payments = pluginApp(\Plenty\Modules\Payment\Contracts\PaymentRepositoryContract::class);  
-           $paymentDetails = $payments->getPaymentsByOrderId($order->id);
+	   
+            $payments = pluginApp(\Plenty\Modules\Payment\Contracts\PaymentRepositoryContract::class);  
+	   $paymentDetails = $payments->getPaymentsByOrderId($order->id);
 	    $this->getLogger(__METHOD__)->error('payment', $paymentDetails);
 	   $orderAmount = (float) $order->amounts[0]->invoiceTotal;
 	   $paymentKey = $paymentDetails[0]->method->paymentKey;
