@@ -144,20 +144,30 @@ class RefundEventProcedure
 					$paymentData['child_order_id'] = $child_order_id;
 					$paymentData['parent_order_id'] = $parent_order_id;
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
-					$paymentData['payment_status'] = !empty($partial_refund_amount) ? 'partial_refund' : 'refund';
-if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {			
-$this->paymentHelper->createRefundPayment($paymentDetails,$paymentData,$transactionComments);
-	
-} else {
-	$paymentData['currency']    = $paymentDetails[0]->currency;
+					
+foreach ($paymentDetails as $payment) {
+            $mop = $payment->mopId;
+            $currency = $payment->currency;
+            $parentPaymentId = $payment->id;
+        }
+					
+					
+	$paymentData['currency']    = $currency;
 	$paymentData['paid_amount'] = (float) $orderAmount;
 	$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
-	$paymentData['order_no']    = $order->id;
+	$paymentData['order_no']    = ($order->typeId == OrderType::TYPE_CREDIT_NOTE) ? $child_order_id : $order->id;
 	$paymentData['type']        = 'debit';
-	$paymentData['mop']         = $paymentDetails[0]->mopId;
+	$paymentData['mop']         = $mop;
+	$paymentData['payment_status'] = !empty($partial_refund_amount) ? 'partial_refund' : 'refund';
+         $paymentData['parentId']         = $parentPaymentId;				
+						
 	$paymentData['booking_text'] = $transactionComments;  
-	$this->paymentHelper->updatePayments($paymentData['tid'], $responseData['tid_status'], $order->id, '');
-	$this->paymentHelper->createPlentyPayment($paymentData);
+	if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
+	$this->paymentHelper->updatePayments($paymentData['tid'] , $responseData['tid_status'], $order->id, $paymentData['payment_status'] );
+	} else {
+		$this->paymentHelper->updatePayments($paymentData['tid'] , $responseData['tid_status'], $order->id, '' );
+	}
+	$this->paymentHelper->createPlentyPayment($paymentData, true);
 }
 	
 				} else {
