@@ -142,11 +142,7 @@ class RefundEventProcedure
 						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message', $paymentRequestData['lang']), $parentOrder[0]->tid, (float) $orderAmount);
 					 }
 					$paymentData['booking_text'] = $transactionComments;  
-					
-					$paymentData['type']         = !empty($partial_refund_amount) ? 'partial_refund' : 'debit';
-					$paymentDetails->status = $paymentData['type'];
-					$payments->updatePayment($paymentDetails);
-					$this->paymentHelper->updatePayments($paymentData['tid'], $responseData['tid_status'], $order->id);
+	
 					$this->paymentHelper->createPlentyPayment($paymentData);
 				} else {
 					$error = $this->paymentHelper->getNovalnetStatusText($responseData);
