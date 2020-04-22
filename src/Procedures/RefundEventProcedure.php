@@ -144,6 +144,7 @@ class RefundEventProcedure
 					$paymentData['child_order_id'] = $child_order_id;
 					$paymentData['parent_order_id'] = $parent_order_id;
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
+					$paymentData['payment_status'] = !empty($partial_refund_amount) ? 'partial_refund' : 'refund';
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	$this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
 } else {
