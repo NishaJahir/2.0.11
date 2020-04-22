@@ -73,10 +73,10 @@ class RefundEventProcedure
         /* @var $order Order */
 	 
 	   $order = $eventTriggered->getOrder(); 
-	 
+	 $this->getLogger(__METHOD__)->error('order', $order);
 	   $payments = pluginApp(\Plenty\Modules\Payment\Contracts\PaymentRepositoryContract::class);  
        $paymentDetails = $payments->getPaymentsByOrderId($order->id);
-	    $this->getLogger(__METHOD__)->error('test', 'enterrrrrrr');
+	    $this->getLogger(__METHOD__)->error('payment', $paymentDetails);
 	   $orderAmount = (float) $order->amounts[0]->invoiceTotal;
 	   $paymentKey = $paymentDetails[0]->method->paymentKey;
 	   $key = $this->paymentService->getkeyByPaymentKey($paymentKey);
@@ -90,6 +90,7 @@ class RefundEventProcedure
 		}
 	    if ($status == 100)   
 	    { 
+		    $this->getLogger(__METHOD__)->error('enter', $status);
 			try {
 				$paymentRequestData = [
 					'vendor'         => $this->paymentHelper->getNovalnetConfig('novalnet_vendor_id'),
