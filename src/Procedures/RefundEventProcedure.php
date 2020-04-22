@@ -129,11 +129,11 @@ class RefundEventProcedure
 				
 				if ($responseData['status'] == '100') {
 					$paymentData['currency']    = $paymentDetails[0]->currency;
-					$paymentData['paid_amount'] = !empty($partial_refund_amount) ?  (float) $partial_refund_amount : (float) $orderAmount;
+					$paymentData['paid_amount'] = (float) $orderAmount;
 					$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
 					$paymentData['order_no']    = ($order->typeId == OrderType::TYPE_CREDIT_NOTE) ? $child_order_id : $order->id;
-					$paymentData['type']        = ($order->typeId == OrderType::TYPE_CREDIT_NOTE) ? 'credit' : 'debit';
 					$paymentData['mop']         = $paymentDetails[0]->mopId;
+					
 
 					$transactionComments = '';
 					if (!empty($responseData['tid'])) {
@@ -142,10 +142,10 @@ class RefundEventProcedure
 						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message', $paymentRequestData['lang']), $parentOrder[0]->tid, (float) $orderAmount);
 					 }
 					$paymentData['booking_text'] = $transactionComments;  
-					if ($paymentData['paid_amount'] < $orderAmount) {
-						$paymentData['type'] = 'partial_refund';
-					}
 					
+					$paymentData['type']         = !empty($partial_refund_amount) ? 'partial_refund' : 'debit';
+					$paymentDetails->status = $paymentData['type'];
+					$payments->updatePayment($paymentDetails);
 					$this->paymentHelper->updatePayments($paymentData['tid'], $responseData['tid_status'], $order->id);
 					$this->paymentHelper->createPlentyPayment($paymentData);
 				} else {
