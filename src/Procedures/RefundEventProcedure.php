@@ -150,7 +150,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
 	 foreach($paymentDetails as $payment){
 	   $payment->status = ($parent_order_amount > $orderAmount) ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
-	   $this->paymentRepository->updatePayment($payment);
+	   $payments->updatePayment($payment);
 	 }
 }
 					
