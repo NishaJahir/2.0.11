@@ -707,7 +707,7 @@ class PaymentHelper
         
     }
     
-    public function getNewPaymentStatus($paymentDetails)
+    public function getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount)
     {
         $payment = pluginApp(\Plenty\Modules\Payment\Models\Payment::class);
         $payments = pluginApp(\Plenty\Modules\Payment\Contracts\PaymentRepositoryContract::class); 
