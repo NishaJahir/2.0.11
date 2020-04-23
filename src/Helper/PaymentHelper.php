@@ -226,6 +226,7 @@ class PaymentHelper
         $paymentObj = $this->paymentRepository->createPayment($payment);
 
         $this->assignPlentyPaymentToPlentyOrder($paymentObj, (int)$requestData['order_no']);
+        $this->getLogger(__METHOD__)->error('updated', $paymentObj);
     }
     
 
