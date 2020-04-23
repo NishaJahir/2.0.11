@@ -148,19 +148,20 @@ class RefundEventProcedure
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	 
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
-	 $this->paymentHelper->getNewPaymentStatus($paymentDetails);
-}
-					
-					
-
-					
-					
-					
-					
-					
-
-
+	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount);
+} else {
 	
+	$paymentData['currency']    = $paymentDetails[0]->currency;
+	$paymentData['paid_amount'] = (float) $orderAmount;
+	$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
+	$paymentData['order_no']    = $order->id;
+	$paymentData['type']        = 'debit';
+	$paymentData['mop']         = $paymentDetails[0]->mopId;
+	$paymentData['booking_text'] = $transactionComments;  
+	$this->paymentHelper->updatePayments($paymentData['tid'], $responseData['tid_status'], $order->id, '');
+	$this->paymentHelper->createPlentyPayment($paymentData);
+}
+
 				} else {
 					$error = $this->paymentHelper->getNovalnetStatusText($responseData);
 					$this->getLogger(__METHOD__)->error('Novalnet::doRefundError', $error);
