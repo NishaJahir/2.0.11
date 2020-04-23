@@ -146,8 +146,9 @@ class RefundEventProcedure
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
 					
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
-	 $payment_class = pluginApp(\Plenty\Modules\Payment\Models\Payment::class);
+	 
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
+	 $payment = pluginApp(\Plenty\Modules\Payment\Models\Payment::class);
 	 foreach($paymentDetails as $payment){
 	   $payment->status = ($parent_order_amount > $orderAmount) ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
 	   $payments->updatePayment($payment);
