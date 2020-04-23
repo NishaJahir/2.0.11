@@ -146,20 +146,9 @@ class RefundEventProcedure
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
 					$paymentData['payment_status'] = !empty($partial_refund_amount) ? 'partial_refund' : 'refund';
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
-	$this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
-} else {
-	
-	$paymentData['currency']    = $paymentDetails[0]->currency;
-	$paymentData['paid_amount'] = (float) $orderAmount;
-	$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
-	$paymentData['order_no']    = $order->id;
-	$paymentData['type']        = 'debit';
-	$paymentData['mop']         = $paymentDetails[0]->mopId;
-	$paymentData['booking_text'] = $transactionComments;  
-	$this->paymentHelper->updatePayments($paymentData['tid'], $responseData['tid_status'], $order->id, '');
-	$this->paymentHelper->createPlentyPayment($paymentData);
-}
-					
+	$debit = $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
+	$this->getLogger(__METHOD__)->error('debit', $debit);
+} 				
 					
 
 
