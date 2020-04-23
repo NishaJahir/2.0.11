@@ -146,8 +146,8 @@ class RefundEventProcedure
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
 					$paymentData['payment_status'] = !empty($partial_refund_amount) ? 'partial_refund' : 'refund';
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
-	$debit = $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
-	$this->getLogger(__METHOD__)->error('debit', $debit);
+	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
+	
 } 				
 					
 
