@@ -704,5 +704,17 @@ class PaymentHelper
         $paymentObj = $this->paymentRepository->createPayment($payment);
          $this->getLogger(__METHOD__)->error('refundpayment', $paymentObj);
         $this->assignPlentyPaymentToPlentyOrder($paymentObj, (int)$paymentData['child_order_id']);
+        
     }
+    
+    public function getNewPaymentStatus($paymentDetails)
+    {
+        $payment = pluginApp(\Plenty\Modules\Payment\Models\Payment::class);
+        $payments = pluginApp(\Plenty\Modules\Payment\Contracts\PaymentRepositoryContract::class); 
+         foreach($paymentDetails as $payment){
+           $payment->status = ($parent_order_amount > $orderAmount) ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
+           $payments->updatePayment($payment);
+         }
+    }
+    
 }
