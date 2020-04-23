@@ -621,7 +621,7 @@ class PaymentHelper
              if ($type == 'partial_refund' || $type == 'refund') {
         $status_type = ($type == 'partial_refund') ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
         } else {
-          $status_type =   $payment->type;
+          $status_type =   $payment->status;
         }
         $payment->status = $status_type;
         $payment->updateOrderPaymentStatus = true;    
@@ -704,5 +704,6 @@ class PaymentHelper
         $paymentObj = $this->paymentRepository->createPayment($payment);
          $this->getLogger(__METHOD__)->error('refundpayment', $paymentObj);
         $this->assignPlentyPaymentToPlentyOrder($paymentObj, (int)$paymentData['child_order_id']);
+        $this->updatePayments($paymentData['parent_tid'], $paymentData['tid_status'], $paymentData['parent_order_id'], $paymentData['payment_status']);
     }
 }
