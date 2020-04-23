@@ -91,7 +91,7 @@ class RefundEventProcedure
 	   $this->getLogger(__METHOD__)->error('payment', $paymentDetails);
 	   $orderAmount = (float) $order->amounts[0]->invoiceTotal;
 	   $parent_order_amount = (float) $paymentDetails[0]->amount;
-	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parent_order_amount > $orderAmount) {
+	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parent_order_amount >= $orderAmount) {
 		$partial_refund_amount =  $parent_order_amount -  $orderAmount;
 	    }  
 	    
