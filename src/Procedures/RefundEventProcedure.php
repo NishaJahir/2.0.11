@@ -140,7 +140,7 @@ class RefundEventProcedure
 					
 					$paymentData['tid'] = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
 					$paymentData['tid_status'] = $responseData['tid_status'];
-					$paymentData['remaining_paid_amount'] = !empty($partial_refund_amount) ? (float) $partial_refund_amount : (float) $orderAmount;
+					$paymentData['remaining_paid_amount'] = (float) $orderAmount;
 					$paymentData['child_order_id'] = $child_order_id;
 					$paymentData['parent_order_id'] = $parent_order_id;
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
