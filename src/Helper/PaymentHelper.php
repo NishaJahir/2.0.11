@@ -176,7 +176,7 @@ class PaymentHelper
      * @param array $requestData
      * @return object
      */
-    public function createPlentyPayment($requestData)
+    public function createPlentyPayment($requestData, $partial_refund=false)
     {        
         /** @var Payment $payment */
         $payment = pluginApp(\Plenty\Modules\Payment\Models\Payment::class);
@@ -195,7 +195,7 @@ class PaymentHelper
         if(!empty($requestData['type']) && $requestData['type'] == 'debit')
         {
             $payment->type = $requestData['type'];
-            $payment->status = Payment::STATUS_REFUNDED;
+            $payment->status = ($partial_refund == true )  ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
         }
        
         
