@@ -361,8 +361,8 @@ class CallbackController extends Controller
             }
             else if($this->getPaymentTypeLevel() == 1 && $this->aryCaptureParams['tid_status'] == 100)
             {
-		$details = $this->transaction->getTransactionData('tid', $this->aryCaptureParams['shop_tid']);
-		    $this->getLogger(__METHOD__)->error('testttttttorderrrr', $nnTransactionHistory);
+		$transaction_datas = $this->transaction->getTransactionData('tid', $this->aryCaptureParams['shop_tid']);
+		   
 		    
                 $callbackComments = '</br>';
                 $callbackComments .= (in_array($this->aryCaptureParams['payment_type'], ['CREDITCARD_BOOKBACK', 'PAYPAL_BOOKBACK', 'REFUND_BY_BANK_TRANSFER_EU', 'PRZELEWY24_REFUND', 'CASHPAYMENT_REFUND', 'GUARANTEED_INVOICE_BOOKBACK', 'GUARANTEED_SEPA_BOOKBACK'])) ? sprintf($this->paymentHelper->getTranslatedText('callback_bookback_execution',$orderLanguage), $nnTransactionHistory->tid, sprintf('%0.2f', ($this->aryCaptureParams['amount']/100)) , $this->aryCaptureParams['currency'], date('Y-m-d H:i:s'), $this->aryCaptureParams['tid'] ) . '</br>' : sprintf( $this->paymentHelper->getTranslatedText('callback_chargeback_execution',$orderLanguage), $nnTransactionHistory->tid, sprintf( '%0.2f',( $this->aryCaptureParams['amount']/100) ), $this->aryCaptureParams['currency'], date('Y-m-d H:i:s'), $this->aryCaptureParams['tid'] ) . '</br>';
@@ -375,8 +375,22 @@ class CallbackController extends Controller
                 $paymentData['type']        = 'debit';
                 $paymentData['order_no']    = $nnTransactionHistory->orderNo;
                 $paymentData['mop']         = $nnTransactionHistory->mopId;
-
-                $this->paymentHelper->createPlentyPayment($paymentData);
+		 
+		$total_order_details = $this->transaction->getTransactionData('orderNo', $nnTransactionHistory->orderNo);
+		 $this->getLogger(__METHOD__)->error('testinggg', $total_order_details);
+		    $totalCallbackAmount = 0;
+		    foreach($total_order_details as $total_order_detail) {
+			     $this->getLogger(__METHOD__)->error('devvvv', $total_order_detail);
+			    if ($total_order_detail->referenceTid != $total_order_detail->tid) {
+				    $totalCallbackAmount += $total_order_detail->callbackAmount;
+				    $partial_refund_amount = ($nnTransactionHistory->order_total_amount > ($totalCallbackAmount + $this->aryCaptureParams['amount']) )? true : false;
+			    }
+			    
+		  }
+		    
+		    
+       
+                $this->paymentHelper->createPlentyPayment($paymentData, $partial_refund_amount);
                 $this->sendCallbackMail($callbackComments);
                 return $this->renderTemplate($callbackComments);
             }
