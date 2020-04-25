@@ -142,11 +142,11 @@ class RefundEventProcedure
 					$paymentData['tid_status'] = $responseData['tid_status'];
 					$paymentData['remaining_paid_amount'] = (float) $orderAmount;
 					$paymentData['child_order_id'] = $child_order_id;
-					$paymentData['parent_order_id'] = $parent_order_id;
+					$paymentData['parent_order_id'] = $order->id;
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
 					
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
-	 
+	 $this->saveTransactionLog($paymentRequestData,$responseData,$order->id);
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
 	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $parent_order_id);
 } else {
@@ -170,6 +170,17 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 						$this->getLogger(__METHOD__)->error('Novalnet::doRefund', $e);
 					}	
 	    }
+    }
+	
+    public function saveTransactionLog($paymentRequestData,$responseData,$order->id)
+    {
+       
+        $insertTransactionLog['callback_amount'] = $paymentRequestData['refund_param'];
+        $insertTransactionLog['tid']             = $paymentRequestData['tid'];
+        $insertTransactionLog['ref_tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'];
+        $insertTransactionLog['order_no']        = $order->id;
+
+        $this->transaction->saveTransaction($insertTransactionLog);
     }
    
 }
