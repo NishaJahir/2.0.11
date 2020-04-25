@@ -30,6 +30,7 @@ use Plenty\Modules\Comment\Contracts\CommentRepositoryContract;
 use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Novalnet\Constants\NovalnetConstants;
+use Novalnet\Services\TransactionService;
 
 /**
  * Class PaymentHelper
@@ -88,6 +89,12 @@ class PaymentHelper
     */
     private $sessionStorage;
         
+    
+    /**
+     * @var transaction
+     */
+    private $transaction;
+    
 
     /**
      * Constructor.
@@ -108,6 +115,7 @@ class PaymentHelper
                                 CommentRepositoryContract $orderComment,
                                 ConfigRepository $configRepository,
                                 FrontendSessionStorageFactoryContract $sessionStorage,
+                                TransactionService $tranactionService,
                                 CountryRepositoryContract $countryRepository
                               )
     {
@@ -118,6 +126,7 @@ class PaymentHelper
         $this->orderComment                   = $orderComment;      
         $this->config                         = $configRepository;
         $this->sessionStorage                 = $sessionStorage;
+        $this->transaction          = $tranactionService;
         $this->countryRepository              = $countryRepository;
     }
 
@@ -708,10 +717,13 @@ class PaymentHelper
         
     }
     
-    public function getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount)
+    public function getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $parent_order_id)
     {
+        $total_order_details = $this->transaction->getTransactionData('orderNo', $parent_order_id);
+        $this->getLogger(__METHOD__)->error('parent', $total_order_details);
         $payment = pluginApp(\Plenty\Modules\Payment\Models\Payment::class);
         $payments = pluginApp(\Plenty\Modules\Payment\Contracts\PaymentRepositoryContract::class); 
+        
          foreach($paymentDetails as $payment){
            $payment->status = ($parent_order_amount > $orderAmount) ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
            $payments->updatePayment($payment);
