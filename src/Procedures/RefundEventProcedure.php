@@ -172,13 +172,13 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	    }
     }
 	
-    public function saveTransactionLog($paymentRequestData,$responseData,$order->id)
+    public function saveTransactionLog($paymentRequestData,$responseData, $orderId)
     {
        
         $insertTransactionLog['callback_amount'] = $paymentRequestData['refund_param'];
         $insertTransactionLog['tid']             = $paymentRequestData['tid'];
         $insertTransactionLog['ref_tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'];
-        $insertTransactionLog['order_no']        = $order->id;
+        $insertTransactionLog['order_no']        = $orderId;
 
         $this->transaction->saveTransaction($insertTransactionLog);
     }
