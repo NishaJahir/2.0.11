@@ -148,7 +148,7 @@ class RefundEventProcedure
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	 
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
-	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $paymentData['tid_status']);
+	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount);
 } else {
 	
 	$paymentData['currency']    = $paymentDetails[0]->currency;
@@ -158,7 +158,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	$paymentData['type']        = 'debit';
 	$paymentData['mop']         = $paymentDetails[0]->mopId;
 	$paymentData['booking_text'] = $transactionComments;  
-	$this->paymentHelper->updatePayments($paymentData['tid'], $responseData['tid_status'], $order->id);
+	$this->paymentHelper->updatePayments($paymentData['tid'], $responseData['tid_status'], $order->id, '');
 	$this->paymentHelper->createPlentyPayment($paymentData);
 }
 
