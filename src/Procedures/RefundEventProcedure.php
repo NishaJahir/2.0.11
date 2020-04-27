@@ -90,27 +90,17 @@ class RefundEventProcedure
 	   $paymentDetails = $payments->getPaymentsByOrderId($order->id);
 	   $this->getLogger(__METHOD__)->error('payment', $paymentDetails);
 	   $orderAmount = (float) $order->amounts[0]->invoiceTotal;
-	   $orderamount_rounded = (float) $orderAmount * 100;
 	   $parent_order_amount = (float) $paymentDetails[0]->amount;
 	    
-	    $parentOrders = $this->transaction->getTransactionData('orderNo', $order->id);
-	    $this->getLogger(__METHOD__)->error('patenennenfn', $parentOrders);
-	    foreach($parentOrders as  $parentOrder) {
-	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parentOrder->amount >= $orderamount_rounded) {
-		$partial_refund_amount =  (float) ($parentOrder->amount) - (float) ($orderamount_rounded);
-		$paymentName = $parentOrder->paymentName;
-	    } 
-	} 
-	    $this->getLogger(__METHOD__)->error('round', $partial_refund_amount);
-	    $this->getLogger(__METHOD__)->error('round1', $parentOrder->amount);
-	    $this->getLogger(__METHOD__)->error('round2', $orderamount_rounded);
+	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parent_order_amount >= $orderAmount) {
+		$partial_refund_amount =  $parent_order_amount -  $orderAmount;
+	    }  
 	    
 	   $paymentKey = $paymentDetails[0]->method->paymentKey;
 	   $key = $this->paymentService->getkeyByPaymentKey($paymentKey);
-	   
+	   $parentOrder = $this->transaction->getTransactionData('orderNo', $order->id);
 	    foreach ($paymentDetails[0]->properties as $paymentStatus)
 		{
-		    $this->getLogger(__METHOD__)->error('nnnnnnnnnnnnnnnnnnnnn', $paymentStatus);
 		    if($paymentStatus->typeId == 30)
 		  {
 			$status = $paymentStatus->value;
@@ -118,7 +108,7 @@ class RefundEventProcedure
 		}
 	    if ($status == 100)   
 	    { 
-		     $this->getLogger(__METHOD__)->error('testtttt', $status);
+		    
 			try {
 				$paymentRequestData = [
 					'vendor'         => $this->paymentHelper->getNovalnetConfig('novalnet_vendor_id'),
@@ -128,7 +118,7 @@ class RefundEventProcedure
 					'key'            => $key, 
 					'refund_request' => 1, 
 					'tid'            => $parentOrder[0]->tid, 
-					 'refund_param'  => !empty($partial_refund_amount) ? (float) $partial_refund_amount : (float) $orderamount_rounded ,
+					 'refund_param'  => !empty($partial_refund_amount) ?  (float) $partial_refund_amount * 100 : (float) $orderAmount * 100,
 					'remote_ip'      => $this->paymentHelper->getRemoteAddress(),
 					'lang'           => 'de'   
 					 ];
@@ -151,14 +141,13 @@ class RefundEventProcedure
 					
 					$paymentData['tid'] = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
 					$paymentData['tid_status'] = $responseData['tid_status'];
-					$paymentData['remaining_paid_amount'] = (float) $orderamount_rounded * 100;
+					$paymentData['remaining_paid_amount'] = (float) $orderAmount;
 					$paymentData['child_order_id'] = $child_order_id;
 					$paymentData['parent_order_id'] = $order->id;
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
 					
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
-	$child_order = true;
-	 $this->saveTransactionLog($paymentRequestData,$responseData,$order->id, $parent_order_amount, $paymentName, $child_order);
+	 
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
 	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $parent_order_id);
 } else {
@@ -184,20 +173,6 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	    }
     }
 	
-    public function saveTransactionLog($paymentRequestData,$responseData, $orderId, $amount, $paymentName, $child_order=false)
-    {
-       $insertTransactionLog = [
-       'callback_amount' => $paymentRequestData['refund_param'],
-  	'amount'      => ($child_order == true) ?  $paymentRequestData['refunded_amount'] : (float) $amount,
-    'tid'            => $paymentRequestData['tid'],
-      'ref_tid'       => !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'],
-      'order_no'       => $orderId,
-     'payment_name'    => $paymentName
-   ];
-
-        $this->transaction->saveTransaction($insertTransactionLog);
-	    
-	 $this->getLogger(__METHOD__)->error('tryycatchhh', $insertTransactionLog);
-    }
+   
    
 }
