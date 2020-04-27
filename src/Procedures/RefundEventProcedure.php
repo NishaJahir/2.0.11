@@ -183,14 +183,14 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	
     public function saveTransactionLog($paymentRequestData,$responseData, $orderId, $amount, $child_order=false)
     {
-       
-        $insertTransactionLog['callback_amount'] = $paymentRequestData['refund_param'];
-	 $insertTransactionLog['amount']      = ($child_order == 'true') ?  $paymentRequestData['refunded_amount'] : (float) $amount;
-        $insertTransactionLog['tid']             = $paymentRequestData['tid'];
-        $insertTransactionLog['ref_tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'];
-        $insertTransactionLog['order_no']        = $orderId;
-        $insertTransactionLog['payment_name']    = 'novalnet_cc';
-
+       $insertTransactionLog = [
+       'callback_amount' => $paymentRequestData['refund_param'],
+  	'amount'      => ($child_order == 'true') ?  $paymentRequestData['refunded_amount'] : (float) $amount,
+    'tid'            => $paymentRequestData['tid'],
+      'ref_tid'       => !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'],
+      'order_no'       => $orderId,
+     'payment_name'    => $paymentRequestData['payment_name']
+   ];
 
         $this->transaction->saveTransaction($insertTransactionLog);
 	    
