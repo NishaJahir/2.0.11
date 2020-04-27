@@ -97,7 +97,7 @@ class RefundEventProcedure
 	    $this->getLogger(__METHOD__)->error('patenennenfn', $parentOrders);
 	    foreach($parentOrders as  $parentOrder) {
 	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parentOrder->amount >= $orderamount_rounded) {
-		$partial_refund_amount =  float ($parentOrder->amount) - float ($orderamount_rounded);
+		$partial_refund_amount =  (float) ($parentOrder->amount) - (float) ($orderamount_rounded);
 		$paymentRequestData['payment_name'] = $parentOrder->paymentName;
 		    $paymentRequestData['refunded_amount'] = $orderamount_rounded;
 	    } 
@@ -151,7 +151,7 @@ class RefundEventProcedure
 					
 					$paymentData['tid'] = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
 					$paymentData['tid_status'] = $responseData['tid_status'];
-					$paymentData['remaining_paid_amount'] = (float) $orderAmount;
+					$paymentData['remaining_paid_amount'] = (float) $orderamount_rounded * 100;
 					$paymentData['child_order_id'] = $child_order_id;
 					$paymentData['parent_order_id'] = $order->id;
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
