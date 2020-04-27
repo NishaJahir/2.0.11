@@ -111,6 +111,7 @@ class RefundEventProcedure
 	   
 	    foreach ($paymentDetails[0]->properties as $paymentStatus)
 		{
+		    $this->getLogger(__METHOD__)->error('nnnnnnnnnnnnnnnnnnnnn', $paymentStatus);
 		    if($paymentStatus->typeId == 30)
 		  {
 			$status = $paymentStatus->value;
@@ -118,7 +119,7 @@ class RefundEventProcedure
 		}
 	    if ($status == 100)   
 	    { 
-		    
+		     $this->getLogger(__METHOD__)->error('testtttt', $status);
 			try {
 				$paymentRequestData = [
 					'vendor'         => $this->paymentHelper->getNovalnetConfig('novalnet_vendor_id'),
