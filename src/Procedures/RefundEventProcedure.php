@@ -145,9 +145,13 @@ class RefundEventProcedure
 					$paymentData['child_order_id'] = $child_order_id;
 					$paymentData['parent_order_id'] = $order->id;
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
+					$paymentData['parent_order_amount'] = (float) $parent_order_amount;
+					$paymentData['payment_name'] = strtolower($paymentKey);
+					
 					
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
-	 
+	$child_order = true;
+	 $this->saveTransactionLog($paymentRequestData, $paymentData, $child_order);
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
 	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $parent_order_id);
 } else {
@@ -173,6 +177,23 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	    }
     }
 	
+   public function saveTransactionLog($paymentRequestData,$paymentData, $child_order=false)
+    {
+       
+        $insertTransactionLog = [
+		'callback_amount' => $paymentRequestData['refund_param'],
+		 'amount'     => ($child_order == 'true') ? (float) $paymentData['remaining_paid_amount'] * 100 : (float) $paymentData['parent_order_amount'] * 100,
+        	'tid'            => $paymentRequestData['tid'],
+        	'ref_tid'         => $paymentData['tid'],
+       		'order_no'        => $paymentData['parent_order_id'],
+		'payment_name'	  => $paymentData['payment_name']
+		];
+	   
+
+        $this->transaction->saveTransaction($insertTransactionLog);
+	    
+	 $this->getLogger(__METHOD__)->error('tryyrrrrrrrrrrr', $insertTransactionLog);
+    }
    
    
 }
