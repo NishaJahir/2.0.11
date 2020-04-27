@@ -99,6 +99,7 @@ class RefundEventProcedure
 	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parentOrder->amount >= $orderamount_rounded) {
 		$partial_refund_amount =  $parentOrder->amount -  $orderamount_rounded;
 		$paymentRequestData['payment_name'] = $parentOrder->paymentName;
+		    $paymentRequestData['refunded_amount'] = $orderamount_rounded;
 	    } 
 	} 
 	    
@@ -184,7 +185,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
     {
        
         $insertTransactionLog['callback_amount'] = $paymentRequestData['refund_param'];
-	 $insertTransactionLog['amount']      = ($child_order == 'true') ?  $orderamount_rounded : (float) $amount;
+	 $insertTransactionLog['amount']      = ($child_order == 'true') ?  $paymentRequestData['refunded_amount'] : (float) $amount;
         $insertTransactionLog['tid']             = $paymentRequestData['tid'];
         $insertTransactionLog['ref_tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'];
         $insertTransactionLog['order_no']        = $orderId;
