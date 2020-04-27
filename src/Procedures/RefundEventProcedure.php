@@ -90,14 +90,21 @@ class RefundEventProcedure
 	   $paymentDetails = $payments->getPaymentsByOrderId($order->id);
 	   $this->getLogger(__METHOD__)->error('payment', $paymentDetails);
 	   $orderAmount = (float) $order->amounts[0]->invoiceTotal;
+	   $orderamount_rounded = (float) $orderAmount * 100;
 	   $parent_order_amount = (float) $paymentDetails[0]->amount;
-	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parent_order_amount >= $orderAmount) {
-		$partial_refund_amount =  $parent_order_amount -  $orderAmount;
-	    }  
+	    
+	    $parentOrders = $this->transaction->getTransactionData('orderNo', $order->id);
+	    $this->getLogger(__METHOD__)->error('patenennenfn', $parentOrders);
+	    foreach($parentOrders as  $parentOrder) {
+	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parentOrder->amount >= $orderamount_rounded) {
+		$partial_refund_amount =  $parentOrder->amount -  $orderamount_rounded;
+		$paymentRequestData['payment_name'] = $parentOrder->paymentName;
+	    } 
+	} 
 	    
 	   $paymentKey = $paymentDetails[0]->method->paymentKey;
 	   $key = $this->paymentService->getkeyByPaymentKey($paymentKey);
-	   $parentOrder = $this->transaction->getTransactionData('orderNo', $order->id);
+	   
 	    foreach ($paymentDetails[0]->properties as $paymentStatus)
 		{
 		    if($paymentStatus->typeId == 30)
@@ -117,7 +124,7 @@ class RefundEventProcedure
 					'key'            => $key, 
 					'refund_request' => 1, 
 					'tid'            => $parentOrder[0]->tid, 
-					 'refund_param'  => !empty($partial_refund_amount) ?  (float) $partial_refund_amount * 100 : (float) $orderAmount * 100,
+					 'refund_param'  => !empty($partial_refund_amount) ? $partial_refund_amount : $orderamount_rounded ,
 					'remote_ip'      => $this->paymentHelper->getRemoteAddress(),
 					'lang'           => 'de'   
 					 ];
@@ -146,7 +153,8 @@ class RefundEventProcedure
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
 					
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
-	 $this->saveTransactionLog($paymentRequestData,$responseData,$order->id, $orderAmount);
+	$child_order = true;
+	 $this->saveTransactionLog($paymentRequestData,$responseData,$order->id, $parent_order_amount, $child_order);
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
 	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $parent_order_id);
 } else {
@@ -172,18 +180,20 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	    }
     }
 	
-    public function saveTransactionLog($paymentRequestData,$responseData, $orderId, $amount)
+    public function saveTransactionLog($paymentRequestData,$responseData, $orderId, $amount, $child_order=false)
     {
        
         $insertTransactionLog['callback_amount'] = $paymentRequestData['refund_param'];
-	 $insertTransactionLog['amount']      = (float) $amount;
+	 $insertTransactionLog['amount']      = ($child_order == 'true') ?  $orderamount_rounded : (float) $amount;
         $insertTransactionLog['tid']             = $paymentRequestData['tid'];
         $insertTransactionLog['ref_tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'];
         $insertTransactionLog['order_no']        = $orderId;
+        $insertTransactionLog['payment_name']    = $paymentRequestData['payment_name'];
+
 
         $this->transaction->saveTransaction($insertTransactionLog);
 	    
-	 $this->getLogger(__METHOD__)->error('tryy', $insertTransactionLog);
+	 $this->getLogger(__METHOD__)->error('tryycatchhh', $insertTransactionLog);
     }
    
 }
