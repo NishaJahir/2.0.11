@@ -98,8 +98,7 @@ class RefundEventProcedure
 	    foreach($parentOrders as  $parentOrder) {
 	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parentOrder->amount >= $orderamount_rounded) {
 		$partial_refund_amount =  (float) ($parentOrder->amount) - (float) ($orderamount_rounded);
-		$paymentRequestData['payment_name'] = $parentOrder->paymentName;
-		    $paymentRequestData['refunded_amount'] = $orderamount_rounded;
+		$paymentName = $parentOrder->paymentName;
 	    } 
 	} 
 	    $this->getLogger(__METHOD__)->error('round', $partial_refund_amount);
@@ -159,7 +158,7 @@ class RefundEventProcedure
 					
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	$child_order = true;
-	 $this->saveTransactionLog($paymentRequestData,$responseData,$order->id, $parent_order_amount, $child_order);
+	 $this->saveTransactionLog($paymentRequestData,$responseData,$order->id, $parent_order_amount, $child_order, $paymentName);
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
 	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $parent_order_id);
 } else {
@@ -185,7 +184,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	    }
     }
 	
-    public function saveTransactionLog($paymentRequestData,$responseData, $orderId, $amount, $child_order=false)
+    public function saveTransactionLog($paymentRequestData,$responseData, $orderId, $amount, $child_order=false, $paymentName)
     {
        $insertTransactionLog = [
        'callback_amount' => $paymentRequestData['refund_param'],
@@ -193,7 +192,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
     'tid'            => $paymentRequestData['tid'],
       'ref_tid'       => !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'],
       'order_no'       => $orderId,
-     'payment_name'    => $paymentRequestData['payment_name']
+     'payment_name'    => $paymentName
    ];
 
         $this->transaction->saveTransaction($insertTransactionLog);
