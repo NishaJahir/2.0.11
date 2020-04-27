@@ -146,7 +146,7 @@ class RefundEventProcedure
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
 					
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
-	 $this->saveTransactionLog($paymentRequestData,$responseData,$order->id);
+	 $this->saveTransactionLog($paymentRequestData,$responseData,$order->id, $orderAmount);
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
 	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $parent_order_id);
 } else {
@@ -172,15 +172,18 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	    }
     }
 	
-    public function saveTransactionLog($paymentRequestData,$responseData, $orderId)
+    public function saveTransactionLog($paymentRequestData,$responseData, $orderId, $amount)
     {
        
         $insertTransactionLog['callback_amount'] = $paymentRequestData['refund_param'];
+	 $insertTransactionLog['amount']      = (float) $orderAmount;
         $insertTransactionLog['tid']             = $paymentRequestData['tid'];
         $insertTransactionLog['ref_tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'];
         $insertTransactionLog['order_no']        = $orderId;
 
         $this->transaction->saveTransaction($insertTransactionLog);
+	    
+	 $this->getLogger(__METHOD__)->error('tryy', $insertTransactionLog);
     }
    
 }
