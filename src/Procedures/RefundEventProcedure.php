@@ -97,11 +97,14 @@ class RefundEventProcedure
 	    $this->getLogger(__METHOD__)->error('patenennenfn', $parentOrders);
 	    foreach($parentOrders as  $parentOrder) {
 	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parentOrder->amount >= $orderamount_rounded) {
-		$partial_refund_amount =  $parentOrder->amount -  $orderamount_rounded;
+		$partial_refund_amount =  float ($parentOrder->amount) - float ($orderamount_rounded);
 		$paymentRequestData['payment_name'] = $parentOrder->paymentName;
 		    $paymentRequestData['refunded_amount'] = $orderamount_rounded;
 	    } 
 	} 
+	    $this->getLogger(__METHOD__)->error('round', $partial_refund_amount);
+	    $this->getLogger(__METHOD__)->error('round1', $parentOrder->amount);
+	    $this->getLogger(__METHOD__)->error('round2', $orderamount_rounded);
 	    
 	   $paymentKey = $paymentDetails[0]->method->paymentKey;
 	   $key = $this->paymentService->getkeyByPaymentKey($paymentKey);
@@ -125,7 +128,7 @@ class RefundEventProcedure
 					'key'            => $key, 
 					'refund_request' => 1, 
 					'tid'            => $parentOrder[0]->tid, 
-					 'refund_param'  => !empty($partial_refund_amount) ? $partial_refund_amount : $orderamount_rounded ,
+					 'refund_param'  => !empty($partial_refund_amount) ? (float) $partial_refund_amount : (float) $orderamount_rounded ,
 					'remote_ip'      => $this->paymentHelper->getRemoteAddress(),
 					'lang'           => 'de'   
 					 ];
