@@ -176,7 +176,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
     {
        
         $insertTransactionLog['callback_amount'] = $paymentRequestData['refund_param'];
-	 $insertTransactionLog['amount']      = (float) $orderAmount;
+	 $insertTransactionLog['amount']      = (float) $amount;
         $insertTransactionLog['tid']             = $paymentRequestData['tid'];
         $insertTransactionLog['ref_tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'];
         $insertTransactionLog['order_no']        = $orderId;
