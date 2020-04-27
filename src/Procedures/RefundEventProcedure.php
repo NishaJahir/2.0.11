@@ -188,7 +188,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
     {
        $insertTransactionLog = [
        'callback_amount' => $paymentRequestData['refund_param'],
-  	'amount'      => ($child_order == 'true') ?  $paymentRequestData['refunded_amount'] : (float) $amount,
+  	'amount'      => ($child_order == true) ?  $paymentRequestData['refunded_amount'] : (float) $amount,
     'tid'            => $paymentRequestData['tid'],
       'ref_tid'       => !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'],
       'order_no'       => $orderId,
