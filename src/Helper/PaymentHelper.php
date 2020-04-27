@@ -725,9 +725,11 @@ class PaymentHelper
         $payments = pluginApp(\Plenty\Modules\Payment\Contracts\PaymentRepositoryContract::class); 
         
          foreach($paymentDetails as $payment){
+           $payment->amount = (float) $orderAmount;
            $payment->status = ($parent_order_amount > $orderAmount) ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
            $payments->updatePayment($payment);
          }
+         $this->getLogger(__METHOD__)->error('parentorderupdate', $payments);
     }
     
 }
