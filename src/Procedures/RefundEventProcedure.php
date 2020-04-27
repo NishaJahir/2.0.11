@@ -189,7 +189,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
         $insertTransactionLog['tid']             = $paymentRequestData['tid'];
         $insertTransactionLog['ref_tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $paymentRequestData['tid'];
         $insertTransactionLog['order_no']        = $orderId;
-        $insertTransactionLog['payment_name']    = $paymentRequestData['payment_name'];
+        $insertTransactionLog['payment_name']    = 'novalnet_cc';
 
 
         $this->transaction->saveTransaction($insertTransactionLog);
