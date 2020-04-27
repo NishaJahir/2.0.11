@@ -430,10 +430,15 @@ class CallbackController extends Controller
                     {
                         return $this->renderTemplate('Novalnet Callbackscript received. Order already Paid');
                     }
-                }  elseif (in_array($this->aryCaptureParams['payment_type'], ['INVOICE_START', 'GUARANTEED_INVOICE', 'DIRECT_DEBIT_SEPA', 'GUARANTEED_DIRECT_DEBIT_SEPA'] )) {
+                }  elseif (in_array($this->aryCaptureParams['payment_type'], ['INVOICE_START', 'GUARANTEED_INVOICE', 'DIRECT_DEBIT_SEPA', 'GUARANTEED_DIRECT_DEBIT_SEPA', 'CREDITCARD'] )) {
                 
                     $transactionStatus = $this->payment_details($nnTransactionHistory->orderNo);
                     $saveAdditionData = false;
+			
+			if ($this->aryCaptureParams['tid_status'] == '100' && $transactionStatus == '98') {
+				 $saveAdditionData = true;
+				$orderStatus = $this->config->get('Novalnet.novalnet_cc_order_completion_status'); 
+			}
                           
                     // Checks for Guarantee Onhold
                     if(in_array($this->aryCaptureParams['tid_status'], ['91', '99']) && $transactionStatus == '75') {
@@ -471,7 +476,7 @@ class CallbackController extends Controller
                             
                     } 
                     $db_details = $this->paymentService->getDatabaseValues($nnTransactionHistory->orderNo);
-                            if(in_array ($db_details['payment_id'], [ '27', '37', '40', '41']) && $saveAdditionData) {
+                            if(in_array ($db_details['payment_id'], [ '6', '27', '37', '40', '41']) && $saveAdditionData) {
                                 if (in_array($this->aryCaptureParams['tid_status'], ['91', '100'] ) && in_array ($db_details['payment_id'], [ '27', '41']) ) {
                                         $paymentDetails = $this->payment_details($nnTransactionHistory->orderNo, true);
                                         $bankDetails = json_decode($paymentDetails);
