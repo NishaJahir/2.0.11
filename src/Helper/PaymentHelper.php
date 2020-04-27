@@ -729,7 +729,9 @@ class PaymentHelper
            $payment->status = ($parent_order_amount > $orderAmount) ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
            $payments->updatePayment($payment);
          }
-         $this->getLogger(__METHOD__)->error('parentorderupdate', $payments);
+        
     }
+     $this->getLogger(__METHOD__)->error('parentorderupdate', $payments);
+     $this->getLogger(__METHOD__)->error('testttt', $payment);
     
 }
