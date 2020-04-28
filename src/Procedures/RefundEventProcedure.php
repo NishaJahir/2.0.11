@@ -99,8 +99,8 @@ class RefundEventProcedure
 	    //foreach($parentOrders as $parentOrder) {
 		 //   $parentOrder->amount = (float) ($parentOrder->amount / 100);
 		// if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parent_order_amount >= $orderAmount) {   
-		    //$partial_refund_amount =  $parent_order_amount -  $orderAmount;
-	   // }
+		  //  $partial_refund_amount =  $parent_order_amount -  $orderAmount;
+	//   }
 	   //}
 	    
 		    $this->getLogger(__METHOD__)->error('first', $parent_order_amount);
@@ -162,8 +162,8 @@ class RefundEventProcedure
 					
 					
 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
-	$child_order = true;
-	 $this->saveTransactionLog($paymentRequestData, $paymentData, $child_order);
+	
+	 $this->saveTransactionLog($paymentRequestData, $paymentData);
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
 	
 } else {
@@ -194,7 +194,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
        
         $insertTransactionLog = [
 		'callback_amount' => $paymentRequestData['refund_param'],
-		 'amount'     => ($child_order == 'true') ? (float) $paymentData['refunded_amount'] * 100 : (float) $paymentData['parent_order_amount'] * 100,
+		 'amount'     => (float) $paymentData['parent_order_amount'] * 100 ;
         	'tid'            => $paymentRequestData['tid'],
         	'ref_tid'         => $paymentData['tid'],
        		'order_no'        => $paymentData['parent_order_id'],
