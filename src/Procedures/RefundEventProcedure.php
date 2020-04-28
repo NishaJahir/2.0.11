@@ -90,18 +90,21 @@ class RefundEventProcedure
 	   $paymentDetails = $payments->getPaymentsByOrderId($order->id);
 	   $this->getLogger(__METHOD__)->error('payment', $paymentDetails);
 	   $orderAmount = (float) $order->amounts[0]->invoiceTotal;
-	   $parent_order_amount = (float) $paymentDetails[0]->amount;
+	    foreach ($paymentDetails as $paymentDetail) {
+		    $parent_order_amount = (float) $paymentDetail->amount;
+	    }
+	  
 	    
 	    $parentOrders = $this->transaction->getTransactionData('orderNo', $order->id);
-	    foreach($parentOrders as $parentOrder) {
-		    $parentOrder->amount = (float) ($parentOrder->amount / 100);
-		 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parentOrder->amount >= $orderAmount) {   
-		    $partial_refund_amount =  $parentOrder->amount -  $orderAmount;
+	    //foreach($parentOrders as $parentOrder) {
+		 //   $parentOrder->amount = (float) ($parentOrder->amount / 100);
+		 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parent_order_amount >= $orderAmount) {   
+		    $partial_refund_amount =  $parent_order_amount -  $orderAmount;
 	    }
-	    }
+	   //}
 	    
-		    $this->getLogger(__METHOD__)->error('first', $parentOrder->amount);
-	              $this->getLogger(__METHOD__)->error('sec', $partial_refund_amount);
+		    $this->getLogger(__METHOD__)->error('first', $parent_order_amount);
+	              $this->getLogger(__METHOD__)->error('seccccc', $partial_refund_amount);
 		    $this->getLogger(__METHOD__)->error('third', $orderAmount);
 	    
 	   $paymentKey = $paymentDetails[0]->method->paymentKey;
@@ -146,6 +149,7 @@ class RefundEventProcedure
 					 } else {
 						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message', $paymentRequestData['lang']), $parentOrders[0]->tid, (float) $orderAmount);
 					 }
+					
 					
 					$paymentData['tid'] = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrders[0]->tid;
 					$paymentData['tid_status'] = $responseData['tid_status'];
