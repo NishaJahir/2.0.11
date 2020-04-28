@@ -727,7 +727,7 @@ class PaymentHelper
         $this->assignPlentyPaymentToPlentyOrder($paymentObj, (int)$paymentData['child_order_id']);
         
     }
-    
+    }
     
      
     
