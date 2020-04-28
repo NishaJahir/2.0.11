@@ -705,7 +705,7 @@ class PaymentHelper
 				    $this->getLogger(__METHOD__)->error('testtteewrwew', $totalCallbackAmount);
 				    $partial_refund_amount = ((float) ($paymentData['parent_order_amount'] * 100) > ($totalCallbackAmount + (float) ($paymentData['refunded_amount'] * 100) ) )? true : false;
 			    }
-       
+		    }
         $payment->updateOrderPaymentStatus = true;
         $payment->mopId = (int) $mop;
         $payment->transactionType = Payment::TRANSACTION_TYPE_BOOKED_POSTING;
@@ -726,7 +726,7 @@ class PaymentHelper
          $this->getLogger(__METHOD__)->error('refundpayment', $paymentObj);
         $this->assignPlentyPaymentToPlentyOrder($paymentObj, (int)$paymentData['child_order_id']);
         
-    }
+ 
     }
     
      
