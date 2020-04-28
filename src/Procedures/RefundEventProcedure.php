@@ -94,13 +94,13 @@ class RefundEventProcedure
 	    
 	    $parentOrders = $this->transaction->getTransactionData('orderNo', $order->id);
 	    foreach($parentOrders as $parentOrder) {
-		    $updated_parent_order_amount = (float) ($parentOrder->amount / 100);
-		 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE &&  $updated_parent_order_amount >= $orderAmount) {   
-		    $partial_refund_amount =  $updated_parent_order_amount -  $orderAmount;
+		    $updated_parent_order_amount->amount = (float) ($parentOrder->amount / 100);
+		 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE &&  $updated_parent_order_amount->amount >= $orderAmount) {   
+		    $partial_refund_amount =  $updated_parent_order_amount->amount -  $orderAmount;
 	    }
 	    }
 	    
-		    $this->getLogger(__METHOD__)->error('first', $updated_parent_order_amount);
+		    $this->getLogger(__METHOD__)->error('first', $updated_parent_order_amount->amount);
 	              $this->getLogger(__METHOD__)->error('sec', $partial_refund_amount);
 		    $this->getLogger(__METHOD__)->error('third', $orderAmount);
 	    
@@ -142,17 +142,17 @@ class RefundEventProcedure
 				
 					$transactionComments = '';
 					if (!empty($responseData['tid'])) {
-						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message_new_tid', $paymentRequestData['lang']), $parentOrder[0]->tid, (float) $orderAmount, $responseData['tid']);
+						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message_new_tid', $paymentRequestData['lang']), $parentOrders[0]->tid, (float) $orderAmount, $responseData['tid']);
 					 } else {
-						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message', $paymentRequestData['lang']), $parentOrder[0]->tid, (float) $orderAmount);
+						$transactionComments .= PHP_EOL . sprintf($this->paymentHelper->getTranslatedText('refund_message', $paymentRequestData['lang']), $parentOrders[0]->tid, (float) $orderAmount);
 					 }
 					
-					$paymentData['tid'] = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
+					$paymentData['tid'] = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrders[0]->tid;
 					$paymentData['tid_status'] = $responseData['tid_status'];
 					$paymentData['remaining_paid_amount'] = (float) $partial_refund_amount;
 					$paymentData['child_order_id'] = $child_order_id;
 					$paymentData['parent_order_id'] = $order->id;
-					$paymentData['parent_tid'] = $parentOrder[0]->tid;
+					$paymentData['parent_tid'] = $parentOrders[0]->tid;
 					$paymentData['parent_order_amount'] = (float) $parent_order_amount;
 					$paymentData['payment_name'] = strtolower($paymentKey);
 					
@@ -166,7 +166,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	
 	$paymentData['currency']    = $paymentDetails[0]->currency;
 	$paymentData['paid_amount'] = (float) $orderAmount;
-	$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
+	$paymentData['tid']         = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrders[0]->tid;
 	$paymentData['order_no']    = $order->id;
 	$paymentData['type']        = 'debit';
 	$paymentData['mop']         = $paymentDetails[0]->mopId;
