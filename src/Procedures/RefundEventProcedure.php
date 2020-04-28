@@ -165,7 +165,7 @@ if ($order->typeId == OrderType::TYPE_CREDIT_NOTE) {
 	$child_order = true;
 	 $this->saveTransactionLog($paymentRequestData, $paymentData, $child_order);
 	 $this->paymentHelper->createRefundPayment($paymentDetails, $paymentData, $transactionComments);
-	 $this->paymentHelper->getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $parent_order_id);
+	
 } else {
 	
 	$paymentData['currency']    = $paymentDetails[0]->currency;
