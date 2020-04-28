@@ -92,13 +92,20 @@ class RefundEventProcedure
 	   $orderAmount = (float) $order->amounts[0]->invoiceTotal;
 	   $parent_order_amount = (float) $paymentDetails[0]->amount;
 	    
-	    if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parent_order_amount >= $orderAmount) {
-		$partial_refund_amount =  $parent_order_amount -  $orderAmount;
-	    }  
+	    $parentOrders = $this->transaction->getTransactionData('orderNo', $order->id);
+	    foreach($parentOrders as $parentOrder) {
+		    $updated_parent_order_amount = (float) ($parentOrder->amount / 100);
+		 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE &&  >= $orderAmount) {   
+		    $partial_refund_amount =  $parentOrder->amount -  $orderAmount;
+	    }
+	    
+		    $this->getLogger(__METHOD__)->error('first', $updated_parent_order_amount);
+	              $this->getLogger(__METHOD__)->error('sec', $partial_refund_amount);
+		    $this->getLogger(__METHOD__)->error('third', $orderAmount);
 	    
 	   $paymentKey = $paymentDetails[0]->method->paymentKey;
 	   $key = $this->paymentService->getkeyByPaymentKey($paymentKey);
-	   $parentOrder = $this->transaction->getTransactionData('orderNo', $order->id);
+	   
 	    foreach ($paymentDetails[0]->properties as $paymentStatus)
 		{
 		    if($paymentStatus->typeId == 30)
@@ -117,8 +124,8 @@ class RefundEventProcedure
 					'tariff'         => $this->paymentHelper->getNovalnetConfig('novalnet_tariff_id'),
 					'key'            => $key, 
 					'refund_request' => 1, 
-					'tid'            => $parentOrder[0]->tid, 
-					 'refund_param'  => !empty($partial_refund_amount) ?  (float) $partial_refund_amount * 100 : (float) $orderAmount * 100,
+					'tid'            => $parentOrders[0]->tid, 
+					'refund_param'  =>  (float) $orderAmount * 100,
 					'remote_ip'      => $this->paymentHelper->getRemoteAddress(),
 					'lang'           => 'de'   
 					 ];
@@ -141,7 +148,7 @@ class RefundEventProcedure
 					
 					$paymentData['tid'] = !empty($responseData['tid']) ? $responseData['tid'] : $parentOrder[0]->tid;
 					$paymentData['tid_status'] = $responseData['tid_status'];
-					$paymentData['remaining_paid_amount'] = (float) $orderAmount;
+					$paymentData['remaining_paid_amount'] = (float) $partial_refund_amount;
 					$paymentData['child_order_id'] = $child_order_id;
 					$paymentData['parent_order_id'] = $order->id;
 					$paymentData['parent_tid'] = $parentOrder[0]->tid;
