@@ -94,13 +94,13 @@ class RefundEventProcedure
 	    
 	    $parentOrders = $this->transaction->getTransactionData('orderNo', $order->id);
 	    foreach($parentOrders as $parentOrder) {
-		    $updated_parent_order_amount->amount = (float) ($parentOrder->amount / 100);
-		 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE &&  $updated_parent_order_amount->amount >= $orderAmount) {   
-		    $partial_refund_amount =  $updated_parent_order_amount->amount -  $orderAmount;
+		    $parentOrder->amount = (float) ($parentOrder->amount / 100);
+		 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE && $parentOrder->amount >= $orderAmount) {   
+		    $partial_refund_amount =  $parentOrder->amount -  $orderAmount;
 	    }
 	    }
 	    
-		    $this->getLogger(__METHOD__)->error('first', $updated_parent_order_amount->amount);
+		    $this->getLogger(__METHOD__)->error('first', $parentOrder->amount);
 	              $this->getLogger(__METHOD__)->error('sec', $partial_refund_amount);
 		    $this->getLogger(__METHOD__)->error('third', $orderAmount);
 	    
