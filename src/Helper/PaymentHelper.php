@@ -716,24 +716,7 @@ class PaymentHelper
          $this->getLogger(__METHOD__)->error('refundpayment', $paymentObj);
         $this->assignPlentyPaymentToPlentyOrder($paymentObj, (int)$paymentData['child_order_id']);
         
-	$total_order_details = $this->transaction->getTransactionData('orderNo', $paymentData['parent_order_id']);
-	        $paymentObj = $this->paymentRepository->createPayment($payment);
- 		$payments = $this->paymentRepository->getPaymentsByOrderId($paymentData['parent_order_id']);
-	    
-        $this->getLogger(__METHOD__)->error('eeeeeeeeeeeeee', $payments);
-        $totalCallbackAmount = 0;
-		    foreach($total_order_details as $total_order_detail) {
-			     
-			    if ($total_order_detail->referenceTid != $total_order_detail->tid) {
-				    $totalCallbackAmount += $total_order_detail->callbackAmount;
-				    $this->getLogger(__METHOD__)->error('testtteewrwew', $totalCallbackAmount);
-				    $partial_refund_amount = ((float) ($paymentData['parent_order_amount'] * 100) > ($totalCallbackAmount + (float) ($paymentData['refunded_amount'] * 100) ) )? true : false;
-			    }
-		    }
-	    foreach ($payments as $payment) {
-		$payment->status = ($partial_refund_amount == true) ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;     
-		   $payments->updatePayment($payment);
-	    }
+	
 	   
  
     }
