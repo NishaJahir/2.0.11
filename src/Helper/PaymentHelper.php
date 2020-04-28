@@ -718,7 +718,7 @@ class PaymentHelper
         
 	$total_order_details = $this->transaction->getTransactionData('orderNo', $paymentData['parent_order_id']);
 	        $paymentObj = $this->paymentRepository->createPayment($payment);
- 		$payments = $this->paymentRepository->getPaymentsByOrderId($paymentData['child_order_id']);
+ 		$payments = $this->paymentRepository->getPaymentsByOrderId($paymentData['parent_order_id']);
 	    
         $this->getLogger(__METHOD__)->error('eeeeeeeeeeeeee', $payments);
         $totalCallbackAmount = 0;
