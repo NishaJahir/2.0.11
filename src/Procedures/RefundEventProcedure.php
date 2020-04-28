@@ -98,6 +98,7 @@ class RefundEventProcedure
 		 if ($order->typeId == OrderType::TYPE_CREDIT_NOTE &&  $updated_parent_order_amount >= $orderAmount) {   
 		    $partial_refund_amount =  $updated_parent_order_amount -  $orderAmount;
 	    }
+	    }
 	    
 		    $this->getLogger(__METHOD__)->error('first', $updated_parent_order_amount);
 	              $this->getLogger(__METHOD__)->error('sec', $partial_refund_amount);
