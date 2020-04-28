@@ -728,22 +728,7 @@ class PaymentHelper
         
     }
     
-    public function getNewPaymentStatus($paymentDetails, $parent_order_amount, $orderAmount, $parent_order_id)
-    {
-       
-        $payment = pluginApp(\Plenty\Modules\Payment\Models\Payment::class);
-        $payments = pluginApp(\Plenty\Modules\Payment\Contracts\PaymentRepositoryContract::class); 
-         
-        
-         foreach($paymentDetails as $payment){
-          
-           $payment->status = ($parent_order_amount > $orderAmount) ? Payment::STATUS_PARTIALLY_REFUNDED : Payment::STATUS_REFUNDED;
-           $payments->updatePayment($payment);
-         }
-        
-       
-        
-    }
+    
      
     
 }
