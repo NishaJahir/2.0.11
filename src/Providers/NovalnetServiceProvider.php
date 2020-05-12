@@ -334,6 +334,7 @@ class NovalnetServiceProvider extends ServiceProvider
 										    $contentType = 'errorCode';   
 									 } else {	
 										if( $B2B_customer) {
+											$this->getLogger(__METHOD__)->error('shop provider dob', $birthday);
 											$serverRequestData['data']['payment_type'] = 'GUARANTEED_INVOICE';
 											$serverRequestData['data']['key'] = '41';
 										        $serverRequestData['data']['birth_date'] = !empty($birthday) ? $birthday : '';
