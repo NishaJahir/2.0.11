@@ -149,6 +149,7 @@ class PaymentController extends Controller
         foreach ($address->options as $option) {
             if ($option->typeId == 9) {
             $dob = $option->value;
+		    $this->getLogger(__METHOD__)->error('shop dob', $dob);
             }
        }
         $serverRequestData = $this->paymentService->getRequestParameters($this->basketRepository->load(), $requestData['paymentKey']);
@@ -188,7 +189,8 @@ class PaymentController extends Controller
                 
                 // Proceed as Normal Payment if condition for birthdate doesn't meet as well as force is enable    
                 if ($this->config->get( $force_status ) == 'true' && empty($address->companyName) && (empty($birthday) || time() < strtotime('+18 years', strtotime($birthday)))) { 
-                    if( $requestData['paymentKey'] == 'NOVALNET_SEPA' ) {
+                   $this->getLogger(__METHOD__)->error('shop 1', $birthday);
+			if( $requestData['paymentKey'] == 'NOVALNET_SEPA' ) {
                     $serverRequestData['data']['payment_type'] = 'DIRECT_DEBIT_SEPA';
                     $serverRequestData['data']['key']          = '37';
                     } else {
@@ -199,19 +201,21 @@ class PaymentController extends Controller
                 }
                 else if( empty( $birthday ) && empty($address->companyName))
                 {   
+			$this->getLogger(__METHOD__)->error('shop 3', $birthday);
                     $notificationMessage = $this->paymentHelper->getTranslatedText('doberror');
                     $this->paymentService->pushNotification($notificationMessage, 'error', 100);
                     return $this->response->redirectTo('checkout');
                 }
                 else if( time() < strtotime('+18 years', strtotime($birthday)) && empty($address->companyName))
                 {
+			$this->getLogger(__METHOD__)->error('shop 4', $birthday);
                     $notificationMessage = $this->paymentHelper->getTranslatedText('dobinvalid');
                     $this->paymentService->pushNotification($notificationMessage, 'error', 100);
                     return $this->response->redirectTo('checkout');
                 } 
                 else
                 {
-            
+                   $this->getLogger(__METHOD__)->error('shop 5', $birthday);
                     // Guarantee Params Formation 
                     if( $requestData['paymentKey'] == 'NOVALNET_SEPA' ) {
                     $serverRequestData['data']['payment_type'] = 'GUARANTEED_DIRECT_DEBIT_SEPA';
