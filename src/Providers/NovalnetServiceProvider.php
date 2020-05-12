@@ -228,6 +228,7 @@ class NovalnetServiceProvider extends ServiceProvider
 							    $birthday = $option->value;
 							}
 						}
+			    $this->getLogger(__METHOD__)->error('add', $address);
 						$customerName = explode(' ', $name);
 						$firstname = $customerName[0];
 						if( count( $customerName ) > 1 ) {
