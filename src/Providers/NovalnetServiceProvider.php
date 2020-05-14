@@ -229,6 +229,8 @@ class NovalnetServiceProvider extends ServiceProvider
 							}
 						}
 			    $this->getLogger(__METHOD__)->error('add', $address);
+			    $account = pluginApp(\Plenty\Modules\Account\Address\Models\Address::class);
+	    $this->getLogger(__METHOD__)->error('account', $account);
 						$customerName = explode(' ', $name);
 						$firstname = $customerName[0];
 						if( count( $customerName ) > 1 ) {
