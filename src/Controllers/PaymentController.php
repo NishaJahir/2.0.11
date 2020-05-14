@@ -26,6 +26,8 @@ use Novalnet\Services\PaymentService;
 use Plenty\Plugin\Templates\Twig;
 use Plenty\Plugin\ConfigRepository;
 use Plenty\Plugin\Log\Loggable;
+use Plenty\Modules\Account\Address\Models\Address;
+        $vatService = pluginApp(\Plenty\Modules\Account\Address\Models\Address::class);
 
 /**
  * Class PaymentController
@@ -153,8 +155,12 @@ class PaymentController extends Controller
             if ($option->typeId == 9) {
             $dob = $option->value;
 		    $this->getLogger(__METHOD__)->error('shop dob', $dob);
+		    $this->getLogger(__METHOD__)->error('address full', $address);
             }
        }
+	    $account = pluginApp(\Plenty\Modules\Account\Address\Models\Address::class);
+	    $this->getLogger(__METHOD__)->error('account', $account);
+	    
         $serverRequestData = $this->paymentService->getRequestParameters($this->basketRepository->load(), $requestData['paymentKey']);
         if (empty($serverRequestData['data']['first_name']) && empty($serverRequestData['data']['last_name'])) {
 		$notificationMessage = $this->paymentHelper->getTranslatedText('nn_first_last_name_error');
