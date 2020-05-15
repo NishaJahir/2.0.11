@@ -147,6 +147,7 @@ class PaymentController extends Controller
     public function processPayment()
     {
         $requestData = $this->request->all();
+	    $this->getLogger(__METHOD__)->error('processpayment', $requestData);
         $notificationMessage = $this->paymentHelper->getNovalnetStatusText($requestData);
         $basket = $this->basketRepository->load();  
         $billingAddressId = $basket->customerInvoiceAddressId;
@@ -255,6 +256,7 @@ class PaymentController extends Controller
             $this->sessionStorage->getPlugin()->setValue('nnPaymentData', array_merge($serverRequestData['data'], $responseData));
             
             $this->paymentService->pushNotification($notificationMessage, 'success', 100);
+		$this->getLogger(__METHOD__)->error('shopppppp', 'place order');
             // Redirect to the success page.
             return $this->response->redirectTo('place-order');
         } else {
