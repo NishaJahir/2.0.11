@@ -311,6 +311,7 @@ class NovalnetServiceProvider extends ServiceProvider
 										}
 										else if($guaranteeStatus == 'guarantee')
 										{
+											$this->getLogger(__METHOD__)->error('9876', $guaranteeStatus);
 											$processDirect = false;
 											
 											$paymentProcessUrl = $paymentService->getProcessPaymentUrl();
@@ -370,6 +371,7 @@ class NovalnetServiceProvider extends ServiceProvider
         $eventDispatcher->listen(ExecutePayment::class,
             function (ExecutePayment $event) use ($paymentHelper, $paymentService, $sessionStorage, $transactionLogData,$config,$basketRepository)
             {
+		    $this->getLogger(__METHOD__)->error('123456', 'Now enter');
                 if($paymentHelper->getPaymentKeyByMop($event->getMop())) {
                     $sessionStorage->getPlugin()->setValue('nnOrderNo',$event->getOrderId());
                     $sessionStorage->getPlugin()->setValue('mop',$event->getMop());
@@ -377,6 +379,7 @@ class NovalnetServiceProvider extends ServiceProvider
                     $sessionStorage->getPlugin()->setValue('paymentkey', $paymentKey);
 
                     if(!$paymentService->isRedirectPayment($paymentKey)) {
+			    $this->getLogger(__METHOD__)->error('TESTTTT', $paymentKey);
                         $paymentService->validateResponse();
                     } else {
                         $paymentProcessUrl = $paymentService->getRedirectPaymentUrl();
