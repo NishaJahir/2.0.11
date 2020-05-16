@@ -383,6 +383,7 @@ class NovalnetServiceProvider extends ServiceProvider
                         $paymentService->validateResponse();
                     } else {
                         $paymentProcessUrl = $paymentService->getRedirectPaymentUrl();
+			     $this->getLogger(__METHOD__)->error('enterrrr', $paymentProcessUrl);
                         $event->setType('redirectUrl');
                         $event->setValue($paymentProcessUrl);
                     }
