@@ -123,7 +123,9 @@ class PaymentController extends Controller
      *
      */
     public function paymentResponse() {
+	    
         $responseData = $this->request->all();
+	    $this->getLogger(__METHOD__)->error('paymentresponse', $responseData);
         $isPaymentSuccess = isset($responseData['status']) && in_array($responseData['status'], ['90','100']);
         $notificationMessage = $this->paymentHelper->getNovalnetStatusText($responseData);
         if ($isPaymentSuccess) {
@@ -274,9 +276,11 @@ class PaymentController extends Controller
     {
         $paymentRequestData = $this->sessionStorage->getPlugin()->getValue('nnPaymentData');
         $orderNo = $this->sessionStorage->getPlugin()->getValue('nnOrderNo');
+	    
         $paymentRequestData['order_no'] = $orderNo;
         $paymentUrl = $this->sessionStorage->getPlugin()->getValue('nnPaymentUrl');
-
+         $this->getLogger(__METHOD__)->error('redirectPayment', $paymentRequestData);
+	     $this->getLogger(__METHOD__)->error('url', $paymentUrl);
         return $this->twig->render('Novalnet::NovalnetPaymentRedirectForm', [
                                                                'formData'     => $paymentRequestData,
                                                                 'nnPaymentUrl' => $paymentUrl
