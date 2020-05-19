@@ -724,7 +724,11 @@ class PaymentService
      */
     public function doCaptureVoid($order, $paymentDetails, $tid, $key, $invoiceDetails, $capture=false) 
     {
-        
+        $this->getLogger(__METHOD__)->error('docapture', $order);
+	    $this->getLogger(__METHOD__)->error('docapture1', $tid);
+	    $this->getLogger(__METHOD__)->error('docapture2', $key);
+	    
+	    
         try {
         $paymentRequestData = [
             'vendor'         => $this->paymentHelper->getNovalnetConfig('novalnet_vendor_id'),
@@ -746,6 +750,7 @@ class PaymentService
         
          $response = $this->paymentHelper->executeCurl($paymentRequestData, NovalnetConstants::PAYPORT_URL);
          $responseData =$this->paymentHelper->convertStringToArray($response['response'], '&');
+		$this->getLogger(__METHOD__)->error('docapture3', $responseData);
          if ($responseData['status'] == '100') {
             $paymentData['currency']    = $paymentDetails[0]->currency;
             $paymentData['paid_amount'] = (float) $order->amounts[0]->invoiceTotal;
