@@ -88,6 +88,7 @@ class CaptureEventProcedure
 	$key = $order_info->payment_id;
 	    
 	    if(in_array($status, ['85', '91', '98', '99'])) {
+		    $this->getLogger(__METHOD__)->error('procedures', $invoiceDetails);
         $this->paymentService->doCaptureVoid($order, $paymentDetails, $tid, $key, $invoiceDetails, true);
 	    } 
 
