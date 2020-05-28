@@ -335,14 +335,21 @@ class NovalnetServiceProvider extends ServiceProvider
 									$serverRequestData = $paymentService->getRequestParameters($basketRepository->load(), $paymentKey);
 									if (empty($serverRequestData['data']['first_name']) && empty($serverRequestData['data']['last_name'])) {
 										    $content = $paymentHelper->getTranslatedText('nn_first_last_name_error');
-										    $contentType = 'errorCode';   
+										   $contentType = 'errorCode';   
 									 } else {	
 										if( $B2B_customer) {
 											$this->getLogger(__METHOD__)->error('shop provider dob', $birthday);
 											$serverRequestData['data']['payment_type'] = 'GUARANTEED_INVOICE';
 											$serverRequestData['data']['key'] = '41';
+											if (time() < strtotime('+18 years', strtotime($birthday))) {
+										    	 $content = $paymentHelper->getTranslatedText('dobinvalid');
+											  $contentType = 'errorCode'; 
+										   	}
 										        $serverRequestData['data']['birth_date'] = !empty($birthday) ? $birthday : '';
+										
 										}
+										
+										
 									$sessionStorage->getPlugin()->setValue('nnPaymentData', $serverRequestData['data']);
 									$response = $paymentHelper->executeCurl($serverRequestData['data'], $serverRequestData['url']);
 									$responseData = $paymentHelper->convertStringToArray($response['response'], '&');	
